@@ -1,0 +1,13 @@
+{
+  "name": "bea/acf-svg-icon",
+  "description": "Add ACF SVG selector",
+  "minimum-stability": "stable",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "BeAPI",
+      "email": "technique@beapi.fr"
+    }
+  ],
+  "type": "wordpress-plugin"
+}
