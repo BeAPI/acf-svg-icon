@@ -18,12 +18,12 @@ gulp.task('dist', function () {
 });
 
 gulp.task('check-js', function () {
-	return gulp.src('assets/js/component.js')
+	return gulp.src('assets/js/inputs.js')
 		.pipe(plugins.jshint())
 		.pipe(plugins.jshint.reporter('default'));
 });
 
 // On default task, just compile on demand
 gulp.task('default', function() {
-	gulp.watch('assets/js/*.js', [ 'check-js']);
+	gulp.watch('assets/js/inputs.js', ['check-js']);
 });
