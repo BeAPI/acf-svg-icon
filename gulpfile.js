@@ -11,9 +11,9 @@ gulp.task('dist', function () {
 		.pipe(plugins.concat('input.min.js'))
 		.pipe(gulp.dest('assets/js/'));
 
-	return gulp.src([ 'assets/css/style.css' ])
+	return gulp.src([ 'assets/css/input.css' ])
 		.pipe(plugins.uglifycss())
-		.pipe(plugins.concat('style.min.css'))
+		.pipe(plugins.concat('input.min.css'))
 		.pipe(gulp.dest('assets/css/'));
 });
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Advanced Custom Fields: SVG Icon\n"
-"POT-Creation-Date: 2017-06-15 10:00+0100\n"
-"PO-Revision-Date: 2017-06-15 10:00+0100\n"
+"POT-Creation-Date: 2017-06-15 11:04+0100\n"
+"PO-Revision-Date: 2017-06-15 11:04+0100\n"
 "Last-Translator: Xavier Zalawa <xavier@7studio.fr>\n"
 "Language-Team: BE API Technical team\n"
 "Language: English\n"
@@ -17,23 +17,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../fields/field-v5.php:14
+#: ../fields/acf-svg_icon-v5.php:24
 msgid "SVG Icon selector"
 msgstr ""
 
-#: ../fields/field-v5.php:15
-msgid "Basic"
-msgstr ""
-
-#: ../fields/field-v5.php:40
+#: ../fields/acf-svg_icon-v5.php:56
 msgid "Select an icon"
 msgstr ""
 
-#: ../fields/field-v5.php:62
+#: ../fields/acf-svg_icon-v5.php:76
 msgid "Display clear button?"
 msgstr ""
 
-#: ../fields/field-v5.php:63
+#: ../fields/acf-svg_icon-v5.php:77
 msgid ""
 "Whether or not a clear button is displayed when the select box has a "
 "selection."
