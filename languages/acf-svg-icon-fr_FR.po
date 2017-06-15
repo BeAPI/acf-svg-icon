@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Advanced Custom Fields: SVG Icon\n"
+"POT-Creation-Date: 2017-06-15 10:00+0100\n"
+"PO-Revision-Date: 2017-06-15 10:35+0100\n"
+"Last-Translator: Xavier Zalawa <xavier@7studio.fr>\n"
+"Language-Team: BE API Technical team\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: __;_e;_x;_ex;_n:1,2;_nx:1,2;_n_noop:1,2;_nx_noop:1,2;"
+"esc_html__;esc_html_e;esc_html_x;esc_attr__;esc_attr_e;esc_attr_x\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Language: French (France)\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../fields/field-v5.php:14
+msgid "SVG Icon selector"
+msgstr "Sélection d’une icône"
+
+#: ../fields/field-v5.php:15
+msgid "Basic"
+msgstr "Champs Basiques"
+
+#: ../fields/field-v5.php:40
+msgid "Select an icon"
+msgstr "Sélectionner une icône"
+
+#: ../fields/field-v5.php:62
+msgid "Display clear button?"
+msgstr "Autoriser une valeur vide ?"
+
+#: ../fields/field-v5.php:63
+msgid ""
+"Whether or not a clear button is displayed when the select box has a "
+"selection."
+msgstr ""
+"Affiche un bouton \"x\" pour réinitialiser la sélection et afficher le texte "
+"de remplacement."
