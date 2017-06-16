@@ -1,49 +1,38 @@
-(function ($) {
+( function( $ ) {
     function initialize_field( $el ) {
-        var $select = $el.find('.acf-input select');
-
-        // Bails ealry if we don't need stylised UI
-        if ( 0 == $select.attr('data-ui') ) {
-            return;
-        }
-
-        var svg_file_url = $select.attr('data-file_url');
-        var allowClear = 1 == $select.attr('data-allow_null');
-        var opts = {
-            width: '100%',
-            containerCssClass: '-acf', // Applies ACF styles to Select2
-            allowClear: allowClear,
-            formatResult: svg_icon_format,
-            formatSelection: svg_icon_format_small
+        var $bea_select = $el.find( 'select' );
+        var bea_args = $bea_select.data();
+        var bea_elem = function( id, text ) {
+            return '<svg class="acf_svg__icon" \
+                         aria-hidden="true" \
+                         role="img" \
+                    > \
+                        <use xlink:href="' + bea_args.file_url + '#' + id + '"></use> \
+                    </svg> \
+                   ' + text;
         };
 
-        // Ensures the right behavour of the placeholder
-        if ( allowClear ) {
-            $('[value=""]', $select).text('');
-        }
+        acf.add_filter( 'select2_args', function( select2_args, $select, args, $f ) {
+            if ( $bea_select === $select ) {
+                select2_args.formatResult = function( result, container, query, escapeMarkup ) {
+                    // run default formatResult
+                    var text = $.fn.select2.defaults.formatResult( result, container, query, escapeMarkup );
 
-        $select.select2( opts );
+                    return bea_elem( result.id, text );
+                };
+                select2_args.formatSelection = function( object, $div ) {
+                    return bea_elem( object.id, object.text );
+                };
+            }
 
-        /**
-         * Format the content in select 2
-         *
-         * @param css
-         * @returns {string}
-         */
-        function svg_icon_format(css) {
-            return '<svg class="acf_svg__icon icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="'+ svg_file_url +'#'+ css.id +'"></use> </svg>'+ css.text;
-        }
+            return select2_args;
+        } );
 
-        /**
-         * Format the content in select 2
-         *
-         * @param css
-         * @returns {string}
-         */
-        function svg_icon_format_small(css) {
-            return '<svg class="acf_svg__icon small icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="'+ svg_file_url +'#'+ css.id +'"></use> </svg>'+ css.text;
-        }
-
+        acf.select2.init(
+            $bea_select,
+            bea_args,
+            $el
+        );
     }
 
     if ( typeof acf.add_action !== 'undefined' ) {
@@ -60,11 +49,11 @@
          *  @param   $el (jQuery selection) the jQuery element which contains the ACF fields
          *  @return  n/a
          */
-        acf.add_action('ready append', function( $el ){
+        acf.add_action( 'ready append', function( $el ) {
             // search $el for fields of type 'svg_icon'
-            acf.get_fields({ type : 'svg_icon'}, $el).each(function(){
-                initialize_field( $(this) );
-            });
-        });
+            acf.get_fields( { type : 'svg_icon'}, $el ).each( function() {
+                initialize_field( $( this ) );
+            } );
+        } );
     }
-})(jQuery);
+} )( jQuery );
