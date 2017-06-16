@@ -32,9 +32,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-define( 'ACF_SVG_ICON_VER', '1.0.1' );
-define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
-define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
+define( 'BEA_ACF_SVG_ICON_VERSION', '1.0.1' );
+define( 'BEA_ACF_SVG_ICON_FILE', __FILE__ );
+define( 'BEA_ACF_SVG_ICON_URL', plugin_dir_url( BEA_ACF_SVG_ICON_FILE ) );
+define( 'BEA_ACF_SVG_ICON_DIR', plugin_dir_path( BEA_ACF_SVG_ICON_FILE ) );
 
 if ( ! class_exists( 'acf_plugin_svg_icon' ) ) {
 	class acf_plugin_svg_icon {
@@ -52,13 +53,13 @@ if ( ! class_exists( 'acf_plugin_svg_icon' ) ) {
 		 */
 		function __construct() {
 			$this->settings = array(
-				'version' => ACF_SVG_ICON_VER,
-				'url'     => ACF_SVG_ICON_URL,
-				'path'    => ACF_SVG_ICON_DIR
+				'version'	=> BEA_ACF_SVG_ICON_VERSION,
+				'url'		=> BEA_ACF_SVG_ICON_URL,
+				'path'		=> BEA_ACF_SVG_ICON_DIR
 			);
 
 			// set text domain
-			load_plugin_textdomain( 'acf-svg_icon', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' );
+			load_plugin_textdomain( 'acf-svg_icon', false, plugin_basename( BEA_ACF_SVG_ICON_DIR ) . '/lang' );
 
 			// include field
 			add_action( 'acf/include_field_types', array( $this, 'include_field_types' ) ); // v5

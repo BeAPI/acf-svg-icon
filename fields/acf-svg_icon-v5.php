@@ -372,24 +372,8 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			wp_enqueue_script( 'select2', $select2_script, array( 'jquery' ), $select2_version );
 			wp_enqueue_style( 'select2', $select2_style, '', $select2_version );
 
-			// Scripts.
-			wp_register_script(
-				'acf-input-svg_icon',
-				"{$url}assets/js/input{$min}.js",
-				array( 'select2', 'acf-input' ),
-				$version
-			);
-
-			wp_register_style(
-				'acf-input-svg_icon',
-				"{$url}assets/css/input{$min}.css",
-				array( 'select2', 'acf-input' ),
-				$version
-			);
-
-			// Enqueuing.
-			wp_enqueue_script( 'acf-input-svg_icon' );
-			wp_enqueue_style( 'acf-input-svg_icon' );
+			wp_enqueue_script( 'acf-input-svg_icon', "{$url}assets/js/input{$min}.js", array( 'select2', 'acf-input' ), $version );
+			wp_enqueue_style( 'acf-input-svg_icon', "{$url}assets/css/input{$min}.css", array( 'select2', 'acf-input' ), $version );
 		}
 	}
 
