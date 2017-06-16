@@ -193,6 +193,10 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 
 			$field['choices'] = $this->parse_svg( $field['file'] );
 
+			$field['choices'] = apply_filters( "acf_svg_icon_data", $field['choices'], $field );
+			$field['choices'] = apply_filters( "acf_svg_icon_data/name={$field['_name']}", $field['choices'], $field );
+			$field['choices'] = apply_filters( "acf_svg_icon_data/key={$field['key']}", $field['choices'], $field );
+
 			return $field;
 		}
 
