@@ -186,7 +186,12 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 *  @return	$field
 		 */
 		function load_field( $field ) {
-			$field['choices'] = $this->parse_svg();
+			// Filters for 3rd party customization
+			$field['file'] = apply_filters( "acf_svg_icon_filepath", '', $field );
+			$field['file'] = apply_filters( "acf_svg_icon_filepath/name={$field['_name']}", $field['file'], $field );
+			$field['file'] = apply_filters( "acf_svg_icon_filepath/key={$field['key']}", $field['file'], $field );
+
+			$field['choices'] = $this->parse_svg( $field['file'] );
 
 			return $field;
 		}
@@ -271,16 +276,13 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 					}
 				}
 			echo '</select>';
-		}
 
-		/**
-		 * Get the SVG filepath from theme.
-		 *
-		 * @return mixed|void
-		 * @author Nicolas JUEN
-		 */
-		private function get_svg_file_path() {
-			return apply_filters( 'acf_svg_icon_filepath', false );
+			// Displays SVG
+			if ( ! empty( $field['choices'] ) ) {
+				echo '<div class="hidden">';
+					include_once( $field['file'] );
+				echo '</div>';
+			}
 		}
 
 		/**
@@ -290,16 +292,7 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 *
 		 * @return array|bool
 		 */
-		public function parse_svg() {
-			/**
-			 * The path to the svg file.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string $filepath default path
-			 */
-			$file_path = $this->get_svg_file_path();
-
+		public function parse_svg( $file_path = '' ) {
 			if ( ! file_exists( $file_path ) ) {
 				return array();
 			}
@@ -324,26 +317,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			wp_cache_set( $cache_key, $out, '', HOUR_IN_SECONDS * 24 );
 
 			return $out;
-		}
-
-		/**
-		 * Display the css based on the vars given for dynamic fonts url.
-		 *
-		 * @since 1.0.0
-		 */
-		public function display_svg() {
-			/**
-			 * The svg's files URLs
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param array $font_urls the default svg file url
-			 */
-			$file_path = $this->get_svg_file_path();
-			if ( empty( $file_path ) ) {
-				return;
-			}
-			include_once( $file_path );
 		}
 
 		/**
@@ -415,15 +388,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			// Enqueuing.
 			wp_enqueue_script( 'acf-input-svg_icon' );
 			wp_enqueue_style( 'acf-input-svg_icon' );
-		}
-
-		/**
-		 * Display SVG style in head.
-		 *
-		 * @since 1.0.0
-		 */
-		public function input_admin_footer() {
-			$this->display_svg();
 		}
 	}
 
