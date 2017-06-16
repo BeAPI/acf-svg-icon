@@ -1,17 +1,27 @@
 (function ($) {
     function initialize_field( $el ) {
-        var input = $el.find('.acf-input input');
-        var allowClear = $(input).attr('data-allow-clear') || 0;
+        var $select = $el.find('.acf-input select');
+
+        // Bails ealry if we don't need stylised UI
+        if ( 0 == $select.attr('data-ui') ) {
+            return;
+        }
+
+        var allowClear = 1 == $select.attr('data-allow_null');
         var opts = {
-            dropdownCssClass: "bigdrop widefat",
-            dropdownAutoWidth: true,
+            width: '100%',
+            containerCssClass: '-acf', // Applies ACF styles to Select2
+            allowClear: allowClear,
             formatResult: svg_icon_format,
-            formatSelection: svg_icon_format_small,
-            data: { results : svg_icon_format_data },
-            allowClear: 1 == allowClear
+            formatSelection: svg_icon_format_small
         };
 
-        input.select2( opts );
+        // Ensures the right behavour of the placeholder
+        if ( allowClear ) {
+            $('[value=""]', $select).text('');
+        }
+
+        $select.select2( opts );
 
         /**
          * Format the content in select 2

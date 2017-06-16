@@ -22,15 +22,173 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			// vars
 			$this->name	 = 'svg_icon';
 			$this->label	= __( 'SVG Icon selector', 'acf-svg_icon' );
-			$this->category = 'basic';
+			$this->category = 'choice';
 			$this->defaults = array(
-				'allow_clear' => 0,
+				'allow_null' 	=> 0,
+				'default_value'	=> '',
+				'ui'			=> 0,
+				'placeholder'	=> '',
+				'return_format'	=> 'value'
 			);
-			$this->l10n = array();
+			$this->l10n = array(
+				'matches_1'				=> _x( 'One result is available, press enter to select it.', 'Select2 JS matches_1',	'acf' ),
+				'matches_n'				=> _x( '%d results are available, use up and down arrow keys to navigate.',	'Select2 JS matches_n',	'acf' ),
+				'matches_0'				=> _x( 'No matches found', 'Select2 JS matches_0',	'acf' ),
+				'input_too_short_1'		=> _x( 'Please enter 1 or more characters', 'Select2 JS input_too_short_1', 'acf'  ),
+				'input_too_short_n'		=> _x( 'Please enter %d or more characters', 'Select2 JS input_too_short_n', 'acf'  ),
+				'input_too_long_1'		=> _x( 'Please delete 1 character', 'Select2 JS input_too_long_1', 'acf'  ),
+				'input_too_long_n'		=> _x( 'Please delete %d characters', 'Select2 JS input_too_long_n', 'acf'  ),
+				'selection_too_long_1'	=> _x( 'You can only select 1 item', 'Select2 JS selection_too_long_1', 'acf'  ),
+				'selection_too_long_n'	=> _x( 'You can only select %d items', 'Select2 JS selection_too_long_n', 'acf'  ),
+				'load_more'				=> _x( 'Loading more results&hellip;', 'Select2 JS load_more', 'acf'  ),
+				'searching'				=> _x( 'Searching&hellip;', 'Select2 JS searching', 'acf'  ),
+				'load_fail'           	=> _x( 'Loading failed', 'Select2 JS load_fail', 'acf'  )
+			);
 			$this->settings = $settings;
 
 			// do not delete!
-			parent::__construct();
+	    	parent::__construct();
+		}
+
+		/**
+		 *  render_field_settings()
+		 *
+		 *  Create extra settings for your field. These are visible when editing a field
+		 *
+		 *  @type	action
+		 *  @since	3.6
+		 *  @date	23/01/13
+		 *
+		 *  @param	$field (array) the $field being edited
+		 *  @return	n/a
+		 */
+		function render_field_settings( $field ) {
+			$field['default_value'] = acf_encode_choices( $field['default_value'], false );
+
+			// default_value
+			acf_render_field_setting( $field, array(
+				'label'			=> __( 'Default Value', 'acf' ),
+				'instructions'	=> __( 'Enter the default SVG #ID', 'acf-svg_icon' ),
+				'name'			=> 'default_value',
+				'type'			=> 'text',
+			) );
+
+			// allow_null
+			acf_render_field_setting( $field, array(
+				'label'			=> __( 'Allow Null?', 'acf' ),
+				'instructions'	=> '',
+				'name'			=> 'allow_null',
+				'type'			=> 'true_false',
+				'ui'			=> 1,
+			) );
+
+			// ui
+			acf_render_field_setting( $field, array(
+				'label'			=> __( 'Stylised UI', 'acf' ),
+				'instructions'	=> '',
+				'name'			=> 'ui',
+				'type'			=> 'true_false',
+				'ui'			=> 1,
+			) );
+
+			// return_format
+			acf_render_field_setting( $field, array(
+				'label'			=> __( 'Return Format', 'acf' ),
+				'instructions'	=> __( 'Specify the value returned', 'acf' ),
+				'type'			=> 'select',
+				'name'			=> 'return_format',
+				'choices'		=> array(
+					'value'			=> __( 'Value','acf' ),
+					'label'			=> __( 'Label','acf' ),
+					'array'			=> __( 'Both (Array)','acf' )
+				)
+			) );
+		}
+
+		/**
+		 *  update_value()
+		 *
+		 *  This filter is applied to the $value before it is saved in the db
+		 *
+		 *  @type	filter
+		 *  @since	3.6
+		 *  @date	23/01/13
+		 *
+		 *  @param	$value (mixed) the value found in the database
+		 *  @param	$post_id (mixed) the $post_id from which the value was loaded
+		 *  @param	$field (array) the field array holding all the field options
+		 *  @return	$value
+		 */
+		function update_value( $value, $post_id, $field ) {
+			if ( empty( $value ) ) {
+				return $value;
+			}
+
+			if ( is_array( $value ) ) {
+				// save value as strings, so we can clearly search for them in SQL LIKE statements
+				$value = array_map( 'strval', $value );
+			}
+
+			return $value;
+		}
+
+		/**
+		 *  format_value()
+		 *
+		 *  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+		 *
+		 *  @type	filter
+		 *  @since	3.6
+		 *  @date	23/01/13
+		 *
+		 *  @param	$value (mixed) the value which was loaded from the database
+		 *  @param	$post_id (mixed) the $post_id from which the value was loaded
+		 *  @param	$field (array) the field array holding all the field options
+		 *
+		 *  @return	$value (mixed) the modified value
+		 */
+		function format_value( $value, $post_id, $field ) {
+			if ( empty( $value ) ) {
+				return $value;
+			}
+
+			$label = acf_maybe_get( $field['choices'], $value, $value );
+
+			// value
+			if ( $field['return_format'] == 'value' ) {
+				// do nothing
+
+			// label
+			} elseif ( $field['return_format'] == 'label' ) {
+				$value = $label;
+
+			// array
+			} elseif ( $field['return_format'] == 'array' ) {
+				$value = array(
+					'value'	=> $value,
+					'label'	=> $label
+				);
+			}
+
+			return $value;
+		}
+
+		/**
+		 *  load_field()
+		 *
+		 *  This filter is applied to the $field after it is loaded from the database
+		 *
+		 *  @type	filter
+		 *  @date	23/01/2013
+		 *  @since	3.6.0
+		 *
+		 *  @param	$field (array) the field array holding all the field options
+		 *  @return	$field
+		 */
+		function load_field( $field ) {
+			$field['choices'] = $this->parse_svg();
+
+			return $field;
 		}
 
 		/**
@@ -48,37 +206,71 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 *  @return	n/a
 		 */
 		function render_field( $field ) {
-			// create Field HTML
-			?>
-			<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-				   value="<?php echo esc_attr( $field['value'] ); ?>"
-				   name="<?php echo esc_attr( $field['name'] ); ?>"
-				   data-placeholder="<?php _e( 'Select an icon', 'acf-svg_icon' ); ?>"
-				   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
-			<?php
-		}
+			// convert to array
+			$field['value'] = acf_get_array( $field['value'], false );
+			$field['choices'] = acf_get_array( $field['choices'] );
 
-		/**
-		 *  render_field_settings()
-		 *
-		 *  Create extra options for your field. This is rendered when editing a field.
-		 *  The value of $field['name'] can be used (like bellow) to save extra data to the $field
-		 *
-		 *  @type	action
-		 *  @since	3.6
-		 *  @date	23/01/13
-		 *
-		 *  @param	$field	- an array holding all the field's data
-		 */
-		function render_field_settings( $field ) {
-			// allow clear.
-			acf_render_field_setting( $field, array(
-				'label'		   => __( 'Display clear button?', 'acf-svg_icon' ),
-				'instructions' => __( 'Whether or not a clear button is displayed when the select box has a selection.', 'acf-svg_icon' ),
-				'name'		   => 'allow_clear',
-				'type'		   => 'true_false',
-				'ui'		   => 1,
-			) );
+			// placeholder
+			if ( empty( $field['placeholder'] ) ) {
+				$field['placeholder'] = __( 'Select an icon', 'acf-svg_icon');
+			}
+
+			// add empty value (allows '' to be selected)
+			if ( empty( $field['value'] ) ) {
+				$field['value'] = array( '' );
+			}
+
+			// allow null
+			// - have tried array_merge but this causes keys to re-index if is numeric (post ID's)
+			if ( $field['allow_null'] ) {
+				$prepend = array( '' => '- ' . $field['placeholder'] . ' -' );
+				$field['choices'] = $prepend + $field['choices'];
+			}
+
+			$atts = array(
+				'id'				=> $field['id'],
+				'class'				=> $field['class'],
+				'name'				=> $field['name'],
+				'data-ui'			=> $field['ui'],
+				'data-placeholder'	=> $field['placeholder'],
+				'data-allow_null'	=> $field['allow_null']
+			);
+
+			// special atts
+			foreach ( array( 'readonly', 'disabled' ) as $k ) {
+				if ( ! empty( $field[ $k ] ) ) {
+					$atts[ $k ] = $k;
+				}
+			}
+
+			// hidden input
+			if ( $field['ui'] ) {
+				$v = $field['value'];
+				$v = acf_maybe_get( $v, 0, '' );
+
+				acf_hidden_input( array(
+					'id'	=> $field['id'] . '-input',
+					'name'	=> $field['name'],
+					'value'	=> $v
+				) );
+			}
+
+			echo '<select ' . acf_esc_attr( $atts ) . '>';
+				if ( ! empty( $field['choices'] ) ) {
+					foreach( $field['choices'] as $k => $v ) {
+						$search = html_entity_decode( $k );
+						$pos = array_search( $search, $field['value'] );
+						$atts = array( 'value' => $k );
+
+						if( $pos !== false ) {
+							$atts['selected'] = 'selected';
+							$atts['data-i'] = $pos;
+						}
+
+						echo '<option ' . acf_esc_attr( $atts ) . '>' . $v . '</option>';
+					}
+				}
+			echo '</select>';
 		}
 
 		/**
@@ -91,7 +283,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			return apply_filters( 'acf_svg_icon_filepath', false );
 		}
 
-
 		/**
 		 * Extract icons from svg file.
 		 *
@@ -100,7 +291,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 * @return array|bool
 		 */
 		public function parse_svg() {
-
 			/**
 			 * The path to the svg file.
 			 *
@@ -127,7 +317,7 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 			array_shift( $svg );
 
 			foreach ( $svg[0] as $id ) {
-				$out[] = array( 'id' => $id, 'text' => $id, 'disabled' => false );
+				$out[ $id ] = $id;
 			}
 
 			// Cache 24 hours.
@@ -142,7 +332,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 * @since 1.0.0
 		 */
 		public function display_svg() {
-
 			/**
 			 * The svg's files URLs
 			 *
@@ -171,33 +360,60 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 *  @return	n/a
 		 */
 		function input_admin_enqueue_scripts() {
-			$url = $this->settings['url'];
-			$version = $this->settings['version'];
+			global $wp_scripts;
 
-			// The suffix.
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
+			// bail ealry if the library can't be no enqueue
+		   	if ( ! acf_get_setting( 'enqueue_select2' ) ) {
+		   		return;
+		   	}
+
+		   	$url = $this->settings['url'];
+			$version = $this->settings['version'];
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+			$select2_major_version = acf_get_setting( 'select2_version' );
+			$select2_version = '';
+			$select2_script = '';
+			$select2_style = '';
+
+			// attempt to find 3rd party Select2 version
+			// - avoid including v3 CSS when v4 JS is already enququed
+			if ( isset( $wp_scripts->registered['select2'] ) ) {
+				$select2_major_version = (int) $wp_scripts->registered['select2']->ver;
+			}
+
+			// v4
+			if ( $select2_major_version == 4 ) {
+				$select2_version = '4.0';
+				$select2_script = acf_get_dir( "assets/inc/select2/4/select2.full{$min}.js" );
+				$select2_style = acf_get_dir( "assets/inc/select2/4/select2{$min}.css" );
+			// v3
+			} else {
+				$select2_version = '3.5.2';
+				$select2_script = acf_get_dir( "assets/inc/select2/3/select2{$min}.js" );
+				$select2_style = acf_get_dir( "assets/inc/select2/3/select2.css" );
+			}
+
+			wp_enqueue_script( 'select2', $select2_script, array( 'jquery' ), $select2_version );
+			wp_enqueue_style( 'select2', $select2_style, '', $select2_version );
 
 			// Scripts.
 			wp_register_script(
 				'acf-input-svg_icon',
-				"{$url}assets/js/input{$suffix}.js",
-				array( 'jquery', 'select2', 'acf-input' ),
+				"{$url}assets/js/input{$min}.js",
+				array( 'select2', 'acf-input' ),
 				$version
 			);
 
-			// Localizing the script.
-			wp_localize_script( 'acf-input-svg_icon', 'svg_icon_format_data', $this->parse_svg() );
-
 			wp_register_style(
 				'acf-input-svg_icon',
-				"{$url}assets/css/input{$suffix}.css",
+				"{$url}assets/css/input{$min}.css",
 				array( 'select2', 'acf-input' ),
 				$version
 			);
 
 			// Enqueuing.
 			wp_enqueue_script( 'acf-input-svg_icon' );
-			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'acf-input-svg_icon' );
 		}
 
