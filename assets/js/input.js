@@ -7,6 +7,7 @@
             return;
         }
 
+        var svg_file_url = $select.attr('data-file_url');
         var allowClear = 1 == $select.attr('data-allow_null');
         var opts = {
             width: '100%',
@@ -30,7 +31,7 @@
          * @returns {string}
          */
         function svg_icon_format(css) {
-            return '<svg class="acf_svg__icon icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#'+ css.id +'"></use> </svg>'+ css.text;
+            return '<svg class="acf_svg__icon icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="'+ svg_file_url +'#'+ css.id +'"></use> </svg>'+ css.text;
         }
 
         /**
@@ -40,7 +41,7 @@
          * @returns {string}
          */
         function svg_icon_format_small(css) {
-            return '<svg class="acf_svg__icon small icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#'+ css.id +'"></use> </svg>'+ css.text;
+            return '<svg class="acf_svg__icon small icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="'+ svg_file_url +'#'+ css.id +'"></use> </svg>'+ css.text;
         }
 
     }

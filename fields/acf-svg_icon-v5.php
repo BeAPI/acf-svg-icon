@@ -187,11 +187,15 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 		 */
 		function load_field( $field ) {
 			// Filters for 3rd party customization
-			$field['file'] = apply_filters( "acf_svg_icon_filepath", '', $field );
-			$field['file'] = apply_filters( "acf_svg_icon_filepath/name={$field['_name']}", $field['file'], $field );
-			$field['file'] = apply_filters( "acf_svg_icon_filepath/key={$field['key']}", $field['file'], $field );
+			$field['file'] = array();
 
-			$field['choices'] = $this->parse_svg( $field['file'] );
+			$field['file']['path'] = apply_filters( "acf_svg_icon_filepath", '', $field );
+			$field['file']['path'] = apply_filters( "acf_svg_icon_filepath/name={$field['_name']}", $field['file']['path'], $field );
+			$field['file']['path'] = apply_filters( "acf_svg_icon_filepath/key={$field['key']}", $field['file']['path'], $field );
+
+			$field['file']['url'] = str_replace( get_stylesheet_directory(), get_stylesheet_directory_uri(), $field['file']['path'] );
+
+			$field['choices'] = $this->parse_svg( $field['file']['path'] );
 
 			$field['choices'] = apply_filters( "acf_svg_icon_data", $field['choices'], $field );
 			$field['choices'] = apply_filters( "acf_svg_icon_data/name={$field['_name']}", $field['choices'], $field );
@@ -240,6 +244,7 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 				'id'				=> $field['id'],
 				'class'				=> $field['class'],
 				'name'				=> $field['name'],
+				'data-file_url'     => $field['file']['url'],
 				'data-ui'			=> $field['ui'],
 				'data-placeholder'	=> $field['placeholder'],
 				'data-allow_null'	=> $field['allow_null']
@@ -280,13 +285,6 @@ if ( ! class_exists( 'acf_field_svg_icon' ) )  {
 					}
 				}
 			echo '</select>';
-
-			// Displays SVG
-			if ( ! empty( $field['choices'] ) ) {
-				echo '<div class="hidden">';
-					include_once( $field['file'] );
-				echo '</div>';
-			}
 		}
 
 		/**
