@@ -1,19 +1,26 @@
 {
   "name": "acf-svg-icon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ACF SVG icon field",
   "author": "Be API",
-  "devDependencies": {
-    "matchdep": "*"
+  "babel": {
+    "presets": [
+      "env"
+    ]
   },
-  "dependencies": {
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-preset-env": "^1.5.2",
+    "cssnano": "^3.10.0",
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
     "gulp-jshint": "^2.0.4",
     "gulp-load-plugins": "^1.5.0",
-    "gulp-uglify": "^2.0.1",
-    "gulp-uglifycss": "^1.0.6",
-    "gulp-watch": "^4.3.11",
-    "jshint": "^2.9.4"
+    "gulp-postcss": "^7.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "jshint-stylish": "^2.2.1",
+    "postcss-reporter": "^4.0.0",
+    "run-sequence": "^1.2.2"
   }
 }

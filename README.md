@@ -24,20 +24,60 @@ then run the command :
 composer require bea/acf-svg-icon
 ```
 
-## Tips ##
+## Usage ##
 
-### Using this with your own svg file in your own theme ###
+### Chooses a SVG file for a specific field ###
+
+There are 3 possible ways to use this feature.
+
+1. `acf_svg_icon_filepath` - filter for every field
+2. `acf_svg_icon_filepath/name={$field_name}` - filter for a specific field based on it's name
+3. `acf_svg_icon_filepath/key={$field_key}` - filter for a specific field based on it's key
 
 ```php
 add_filter( 'acf_svg_icon_filepath', 'bea_svg_icon_filepath' );
 function bea_svg_icon_filepath( $filepath ) {
-	if ( is_file( get_stylesheet_directory() . '/assets/icons/icons.svg' ) ) {
-		$filepath = get_stylesheet_directory() . '/assets/icons/icons.svg';
-
-	}
-
-	return $filepath;
+    return get_theme_file_path( 'assets/icons/icons.svg' );
 }
+```
+
+### Translates the SVG text alternatives ###
+
+There are 3 possible ways to use this feature.
+
+1. `acf_svg_icon_data` - filter for every field
+2. `acf_svg_icon_data/name={$field_name}` - filter for a specific field based on it's name
+3. `acf_svg_icon_data/key={$field_key}` - filter for a specific field based on it's key
+
+```php
+add_filter( 'acf_svg_icon_data/name=icon', 'bea_svg_icon_data' );
+function bea_svg_icon_data( $data ) {
+    $data__ = array(
+        'IconTwitter' => 'Twitter'
+    );
+
+    foreach ( $data__ as $id => $value ) {
+        if ( array_key_exists( $id, $data ) ) {
+            $data[ $id ] = $value;
+        }
+    }
+
+    return $data;
+}
+```
+
+By the way, you can also use this filter to reduce the list of SVG symbols ;)
+
+## Tips to display icon ##
+
+```html
+<?php $icon = get_field_object( 'icon' ); ?>
+<div class="Icon">
+    <svg widht="64" height="64">
+        <title><?php echo esc_html( $icon['value']['label'] ); ?></title>
+        <use xlink:href="<?php echo esc_url( "{$icon['file']['url']}#{$icon['value']['value']}" ); ?>"></use>
+    </svg>
+</div>
 ```
 
 ## Changelog ##

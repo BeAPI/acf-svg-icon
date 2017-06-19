@@ -1,0 +1,11 @@
+.acf_svg__icon {
+    height: 32px;
+    margin: 0 10px 0 0;
+    vertical-align: middle;
+    width: 32px;
+}
+.select2-chosen .acf_svg__icon {
+    height: 24px;
+    vertical-align: top;
+	width: 24px;
+}
