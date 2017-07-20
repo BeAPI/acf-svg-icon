@@ -34,11 +34,11 @@ class acf_field_svg_icon extends acf_field {
 	function render_field( $field ) {
 		// create Field HTML
 		?>
-		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-			   value="<?php echo esc_attr( $field['value'] ); ?>"
+		<select class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
+			   data-initialvalue="<?php echo esc_attr( $field['value'] ); ?>"
 			   name="<?php echo esc_attr( $field['name'] ); ?>"
 			   data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
-			   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
+			   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>" style="width: 100%;"></select>
 		<?php
 	}
 
