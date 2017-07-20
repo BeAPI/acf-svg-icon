@@ -1,13 +1,14 @@
 (function ($) {
     function initialize_field($field) {
-        var input = $field.find('.acf-input input');
+        var input = $field.find('.acf-input select');
         var allowClear = $(input).attr('data-allow-clear') || 0;
         var opts = {
             dropdownCssClass: "bigdrop widefat",
             dropdownAutoWidth: true,
-            formatResult: svg_icon_format,
-            formatSelection: svg_icon_format_small,
-            data: { results : svg_icon_format_data },
+            templateSelection: svg_icon_format_small,
+            templateResult: svg_icon_format,
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            data: svg_icon_format_data,
             allowClear: 1 == allowClear
         };
 
@@ -31,6 +32,12 @@
          */
         function svg_icon_format_small(css) {
             return '<svg class="acf_svg__icon small icon '+ css.id +'" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#'+ css.id +'"></use> </svg>'+ css.text;
+        }
+        //$('select').val('1').trigger('change.select2');
+        myValue = input.attr('data-initialvalue');
+        if(myValue != ""){
+          input.find('option[value="'+myValue+'"]').attr('selected', 'selected');
+          input.trigger('change');
         }
 
     }

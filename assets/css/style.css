@@ -1,13 +1,16 @@
 .acf_svg__icon {
-    width:40px;
-    height:40px;
+    width:30px;
+    height:30px;
     margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
 }
 .acf_svg__icon.small {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
     margin-top: 3px;
     float: left;
-
+    display: inline-block;
+    vertical-align: middle;
 }
