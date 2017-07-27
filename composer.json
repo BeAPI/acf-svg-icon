@@ -1,6 +1,6 @@
 {
   "name": "bea/acf-svg-icon",
-  "description": "Add ACF SVG selector",
+  "description": "Add ACF field for selecting SVG icons.",
   "minimum-stability": "stable",
   "license": "GPL-2.0",
   "authors": [
