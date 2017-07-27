@@ -5,10 +5,16 @@ var gulp = require('gulp'),
 
 /*JS task*/
 gulp.task('dist', function () {
-	gulp.src([ 'assets/js/input.js' ])
+	gulp.src([ 'assets/js/input-5.js' ])
 		.pipe(plugins.jshint())
 		.pipe(plugins.uglify())
-		.pipe(plugins.concat('input.min.js'))
+		.pipe(plugins.concat('input-5.min.js'))
+		.pipe(gulp.dest('assets/js/'));
+
+	gulp.src([ 'assets/js/input-56.js' ])
+		.pipe(plugins.jshint())
+		.pipe(plugins.uglify())
+		.pipe(plugins.concat('input-56.min.js'))
 		.pipe(gulp.dest('assets/js/'));
 
 	return gulp.src([ 'assets/css/style.css' ])

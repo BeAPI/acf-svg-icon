@@ -1,6 +1,4 @@
-<?php
-
-class acf_field_svg_icon extends acf_field {
+<?php class acf_field_svg_icon extends acf_field {
 
 	/**
 	 * Defaults for the svg.
@@ -10,8 +8,8 @@ class acf_field_svg_icon extends acf_field {
 
 	function __construct() {
 		// vars
-		$this->name	 = 'svg_icon';
-		$this->label	= __( 'SVG Icon selector', 'acf-svg-icon' );
+		$this->name     = 'svg_icon';
+		$this->label    = __( 'SVG Icon selector', 'acf-svg-icon' );
 		$this->category = __( 'Basic', 'acf' );
 		$this->defaults = array(
 			'allow_clear' => 0,
@@ -22,50 +20,48 @@ class acf_field_svg_icon extends acf_field {
 	}
 
 	/**
-	*
-	*  Create the HTML interface for your field
-	*
-	*  @param	$field - an array holding all the field's data
-	*
-	*  @type	action
-	*  @since	3.6
-	*  @date	23/01/13
-	*/
+	 *
+	 *  Create the HTML interface for your field
+	 *
+	 * @param    $field - an array holding all the field's data
+	 *
+	 * @type    action
+	 * @since    3.6
+	 * @date    23/01/13
+	 */
 	function render_field( $field ) {
 		// create Field HTML
 		?>
 		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-			   value="<?php echo esc_attr( $field['value'] ); ?>"
-			   name="<?php echo esc_attr( $field['name'] ); ?>"
-			   data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
-			   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
+				value="<?php echo esc_attr( $field['value'] ); ?>"
+				name="<?php echo esc_attr( $field['name'] ); ?>"
+				data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
+				data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>" />
 		<?php
 	}
 
 	/**
-	*  render_field_settings()
-	*
-	*  Create extra options for your field. This is rendered when editing a field.
-	*  The value of $field['name'] can be used (like bellow) to save extra data to the $field
-	*
-	*  @type	action
-	*  @since	3.6
-	*  @date	23/01/13
-	*
-	*  @param	$field	- an array holding all the field's data
-	*/
+	 *  render_field_settings()
+	 *
+	 *  Create extra options for your field. This is rendered when editing a field.
+	 *  The value of $field['name'] can be used (like bellow) to save extra data to the $field
+	 *
+	 * @type    action
+	 * @since    3.6
+	 * @date    23/01/13
+	 *
+	 * @param    $field - an array holding all the field's data
+	 */
 	function render_field_settings( $field ) {
 
 		// allow clear.
-		acf_render_field_setting( $field,
-			array(
-				'label'		=> __( 'Display clear button?', 'acf-svg-icon' ),
-				'instructions' => __( 'Whether or not a clear button is displayed when the select box has a selection.', 'acf-svg-icon' ),
-				'name'		 => 'allow_clear',
-				'type'		 => 'true_false',
-				'ui'		   => 1,
-			)
-		);
+		acf_render_field_setting( $field, array(
+			'label'        => __( 'Display clear button?', 'acf-svg-icon' ),
+			'instructions' => __( 'Whether or not a clear button is displayed when the select box has a selection.', 'acf-svg-icon' ),
+			'name'         => 'allow_clear',
+			'type'         => 'true_false',
+			'ui'           => 1,
+		) );
 	}
 
 	/**
@@ -103,7 +99,7 @@ class acf_field_svg_icon extends acf_field {
 
 		// First try to load icons from the cache.
 		$cache_key = 'acf_svg_icon_' . md5( $file_path );
-		$out	   = wp_cache_get( $cache_key );
+		$out       = wp_cache_get( $cache_key );
 		if ( ! empty( $out ) ) {
 			return $out;
 		}
@@ -114,13 +110,43 @@ class acf_field_svg_icon extends acf_field {
 		array_shift( $svg );
 
 		foreach ( $svg[0] as $id ) {
-			$out[] = array( 'id' => $id, 'text' => $id, 'disabled' => false );
+			$out[] = array(
+				'id'       => $id,
+				'text'     => $this->get_nice_display_text( $id ),
+				'disabled' => false
+			);
 		}
 
 		// Cache 24 hours.
 		wp_cache_set( $cache_key, $out, '', HOUR_IN_SECONDS * 24 );
 
 		return $out;
+	}
+
+	/**
+	 * Format the icon id to get his nicename for display purpose
+	 *
+	 * @param $id
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	public function get_nice_display_text( $id ) {
+		// Split up the string based on the '-' carac
+		$ex = explode( '-', $id );
+		if ( empty( $ex ) ) {
+			return $id;
+		}
+
+		// Delete the first value, as it has no real value for the icon name.
+		unset( $ex[0] );
+
+		// Remix values into one with spaces
+		$text = implode( ' ', $ex );
+
+		// Add uppercase to the first word
+		return Ucfirst( $text );
 	}
 
 	/**
@@ -150,31 +176,16 @@ class acf_field_svg_icon extends acf_field {
 	 * @since 1.0.0
 	 */
 	function input_admin_enqueue_scripts() {
-
-		// The suffix.
+		// The suffix
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
 
-		// Scripts.
-		wp_register_script(
-			'acf-input-svg-icon',
-			ACF_SVG_ICON_URL . 'assets/js/input' . $suffix . '.js',
-			array( 'jquery', 'select2', 'acf-input' ),
-			ACF_SVG_ICON_VER
-		);
-
-		// Localizing the script.
+		// Localizing the data
 		wp_localize_script( 'acf-input-svg-icon', 'svg_icon_format_data', $this->parse_svg() );
 
-		wp_register_style(
-			'acf-input-svg-icon',
-			ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css',
-			array( 'select2' ),
-			ACF_SVG_ICON_VER
-		);
+		wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', array( 'select2' ), ACF_SVG_ICON_VER );
 
-		// Enqueuing.
+		// Enqueuing
 		wp_enqueue_script( 'acf-input-svg-icon' );
-		wp_enqueue_style( 'select2' );
 		wp_enqueue_style( 'acf-input-svg-icon' );
 	}
 
