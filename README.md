@@ -40,5 +40,12 @@ function bea_svg_icon_filepath( $filepath ) {
 
 ## Changelog ##
 
+### 1.2.0 - 27 July 2017
+* Add compatibility for ACF 5.6.0 and more versions
+* Still keep compatibility for ACF 5.6.0 and lower versions
+* Add some custom CSS for a more beautiful admin UI
+* Now displaying the icon name, not anymore like a slug
+* Improve readme
+
 ### 1.0.1 - 11 May 2017
 * Initial
