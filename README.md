@@ -16,7 +16,7 @@ This ACF field type is compatible with:
 
 1. Add a line to your repositories array: `{ "type": "git", "url": "https://github.com/strickdj/acf-field-address" }`
 2. Add a line to your require block: `"strickdj/acf-address": "dev-master"`
-3. Run: `composer update
+3. Run: `composer update`
 
 ### Manual
 
