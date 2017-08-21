@@ -41,8 +41,8 @@ function bea_svg_icon_filepath( $filepath ) {
 ## Changelog ##
 
 ### 1.2.1 - 21 Aug 2017
-* fix notice $acf->version propery undefined on ACF versions under 5.6
-* use built wrapper acf_get_setting('version') to retrieve version
+* fix notice $acf->version property undefined on ACF versions under 5.6
+* use built-in wrapper acf_get_setting('version') to retrieve version
 
 ### 1.2.0 - 27 July 2017
 * Add compatibility for ACF 5.6.0 and more versions
