@@ -67,8 +67,8 @@ class acf_field_svg_icon_plugin {
 	 * @param $major
 	 * @since 1.0.0
 	 */
-	public static function register_field_v5( $major ) {
-		$version = version_compare( $major, '5.6.O', '>=' ) ? 56 : 5;
+	public static function register_field_v5() {
+		$version = version_compare( acf_get_setting('version'), '5.6.O', '>=' ) ? 56 : 5;
 
 		// Include the corresponding files
 		include_once( sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR ) );
