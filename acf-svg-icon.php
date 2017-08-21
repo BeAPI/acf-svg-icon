@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Advanced Custom Fields: SVG Icon
- Version: 1.2.0
+ Version: 1.2.1
  Plugin URI: http://www.beapi.fr
  Description: Add an ACF SVG icon selector.
  Author: BE API Technical team
@@ -11,7 +11,7 @@
 
  ----
 
- Copyright 2016 BE API Technical team (human@beapi.fr)
+ Copyright 2017 BE API Technical team (human@beapi.fr)
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-define( 'ACF_SVG_ICON_VER', '1.2.0' );
+define( 'ACF_SVG_ICON_VER', '1.2.1' );
 define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -64,13 +64,11 @@ class acf_field_svg_icon_plugin {
 
 	/**
 	 * Register SVG icon field for ACF v5 or v5.6 depending on ACF version.
-	 *
+	 * @param $major
 	 * @since 1.0.0
 	 */
-	public static function register_field_v5() {
-		// Check ACF version to load the 5.6+ field or the 5+ field version
-		$acf     = new acf();
-		$version = version_compare( $acf->version, '5.6.O', '>=' ) ? 56 : 5;
+	public static function register_field_v5( $major ) {
+		$version = version_compare( $major, '5.6.O', '>=' ) ? 56 : 5;
 
 		// Include the corresponding files
 		include_once( sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR ) );
@@ -95,3 +93,4 @@ function acf_field_svg_icon() {
 	new acf_field_svg_icon_plugin();
 }
 add_action( 'plugins_loaded', 'acf_field_svg_icon' );
+
