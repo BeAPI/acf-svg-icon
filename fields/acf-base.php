@@ -184,7 +184,11 @@ class acf_field_svg_icon extends acf_field {
 
 		$svgs = array();
 		foreach ( $attachments->posts as $attachment ) {
-			$svgs[] = get_attached_file( $attachment->ID );
+		    $file = get_attached_file( $attachment->ID );
+		    if ( ! self::check_file_content( $file ) ) {
+                continue;
+            }
+			$svgs[] = $file;
 		}
 
 		return $svgs;
@@ -269,4 +273,26 @@ class acf_field_svg_icon extends acf_field {
 	public function input_admin_footer() {
 		$this->display_svg();
 	}
+
+	/**
+     * Test file content, don't load image svg file
+     *
+	 * @param $file
+     *
+     * @since 2.0.0
+	 *
+	 * @return bool
+	 */
+	public static function check_file_content( $file ) {
+	    $contents = file_get_contents( $file );
+	    if ( empty( $contents ) ) {
+	        return false;
+        }
+
+		if ( false !== strpos( $contents, '<?xml' ) || false !== strpos( $contents, '<!--?xml' ) ) {
+			return false;
+		}
+
+		return true;
+    }
 }
