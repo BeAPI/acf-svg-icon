@@ -1,7 +1,10 @@
-<?php class acf_field_svg_icon extends acf_field {
+<?php
+
+class acf_field_svg_icon extends acf_field {
 
 	/**
 	 * Defaults for the svg.
+	 *
 	 * @var array
 	 */
 	public $defaults = array();
@@ -27,16 +30,16 @@
 	 *
 	 * @type    action
 	 * @since    3.6
-	 * @date    23/01/13
+	 * @date     23/01/13
 	 */
 	function render_field( $field ) {
 		// create Field HTML
 		?>
-		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-				value="<?php echo esc_attr( $field['value'] ); ?>"
-				name="<?php echo esc_attr( $field['name'] ); ?>"
-				data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
-				data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>" />
+        <input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
+               value="<?php echo esc_attr( $field['value'] ); ?>"
+               name="<?php echo esc_attr( $field['name'] ); ?>"
+               data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
+               data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
 		<?php
 	}
 
@@ -48,7 +51,7 @@
 	 *
 	 * @type    action
 	 * @since    3.6
-	 * @date    23/01/13
+	 * @date     23/01/13
 	 *
 	 * @param    $field - an array holding all the field's data
 	 */
@@ -70,10 +73,47 @@
 	 * @return mixed|void
 	 * @author Nicolas JUEN
 	 */
-	private function get_svg_file_path() {
-		return apply_filters( 'acf_svg_icon_filepath', false );
+	private function get_svg_files_path() {
+		return apply_filters( 'acf_svg_icon_filepath', array() );
 	}
 
+	/**
+	 * Merge WP Medias SVG and custom SVG files
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array
+	 */
+	public function get_all_svg_files() {
+
+		// First try to load files from the cache.
+		$cache_key = 'acf_svg_icon_files';
+		$files     = wp_cache_get( $cache_key );
+		if ( ! empty( $files ) ) {
+			return $files;
+		}
+
+		/**
+		 * Get WP Media SVGs
+		 *
+		 * @since 2.0.0
+		 */
+		$media_svg_files = $this->get_medias_svg();
+
+		/**
+		 * The path to the svg file.
+		 *
+		 * @since 1.0.0
+		 */
+		$custom_svg_files = $this->get_svg_files_path();
+
+		$files = array_merge( $media_svg_files, $custom_svg_files );
+
+		// Cache 24 hours.
+		wp_cache_set( $cache_key, $files, '', HOUR_IN_SECONDS * 24 );
+
+		return $files;
+	}
 
 	/**
 	 * Extract icons from svg file.
@@ -84,43 +124,70 @@
 	 */
 	public function parse_svg() {
 
-		/**
-		 * The path to the svg file.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $filepath default path
-		 */
-		$file_path = $this->get_svg_file_path();
+		$files = $this->get_all_svg_files();
+		if ( empty( $files ) ) {
+			return false;
+		}
 
-		if ( ! file_exists( $file_path ) ) {
+		$out = array();
+
+		foreach ( $files as $file ) {
+			if ( ! is_file( $file ) ) {
+				continue;
+			}
+
+			// If not extract them from the CSS file.
+			$contents = file_get_contents( $file );
+			preg_match_all( '#id="(\S+)"#', $contents, $svg );
+			array_shift( $svg );
+
+			foreach ( $svg[0] as $id ) {
+				$out[] = array(
+					'id'       => $id,
+					'text'     => self::get_nice_display_text( $id ),
+					'disabled' => false,
+				);
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Get WP Medias SVGs
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array
+	 */
+	public function get_medias_svg() {
+		$args = array(
+			'post_type'      => 'attachment',
+			'posts_per_page' => '-1',
+			'post_status'    => 'inherit',
+			'post_mime_type' => 'image/svg+xml',
+		);
+
+		/**
+		 * Filter WP Query get attachments args
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $args
+		 */
+		$args = apply_filters( 'acf_svg_icon_wp_medias_svg_args', $args );
+
+		$attachments = new WP_Query( $args );
+		if ( empty( $attachments->posts ) ) {
 			return array();
 		}
 
-		// First try to load icons from the cache.
-		$cache_key = 'acf_svg_icon_' . md5( $file_path );
-		$out       = wp_cache_get( $cache_key );
-		if ( ! empty( $out ) ) {
-			return $out;
+		$svgs = array();
+		foreach ( $attachments->posts as $attachment ) {
+			$svgs[] = get_attached_file( $attachment->ID );
 		}
 
-		// If not extract them from the CSS file.
-		$contents = file_get_contents( $file_path );
-		preg_match_all( '#id="(\S+)"#', $contents, $svg );
-		array_shift( $svg );
-
-		foreach ( $svg[0] as $id ) {
-			$out[] = array(
-				'id'       => $id,
-				'text'     => $this->get_nice_display_text( $id ),
-				'disabled' => false
-			);
-		}
-
-		// Cache 24 hours.
-		wp_cache_set( $cache_key, $out, '', HOUR_IN_SECONDS * 24 );
-
-		return $out;
+		return $svgs;
 	}
 
 	/**
@@ -132,7 +199,7 @@
 	 *
 	 * @return string
 	 */
-	public function get_nice_display_text( $id ) {
+	public static function get_nice_display_text( $id ) {
 		// Split up the string based on the '-' carac
 		$ex = explode( '-', $id );
 		if ( empty( $ex ) ) {
@@ -163,11 +230,16 @@
 		 *
 		 * @param array $font_urls the default svg file url
 		 */
-		$file_path = $this->get_svg_file_path();
-		if ( empty( $file_path ) ) {
+		$files = $this->get_all_svg_files();
+		if ( empty( $files ) ) {
 			return;
 		}
-		include_once( $file_path );
+		foreach ( $files as $file ) {
+			if ( ! is_file( $file ) ) {
+				continue;
+			}
+			include_once( $file );
+		}
 	}
 
 	/**
