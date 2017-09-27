@@ -4,7 +4,8 @@
     vertical-align: middle;
     width: 32px;
 }
-.select2-chosen .acf_svg__icon {
+.select2-chosen .acf_svg__icon, /* v3 */
+.select2-selection__rendered .acf_svg__icon /* v4 */ {
     height: 24px;
     vertical-align: top;
 	width: 24px;

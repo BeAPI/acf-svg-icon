@@ -14,15 +14,34 @@
 
         acf.add_filter( 'select2_args', function( select2_args, $select, args, $f ) {
             if ( $bea_select === $select ) {
-                select2_args.formatResult = function( result, container, query, escapeMarkup ) {
-                    // run default formatResult
-                    var text = $.fn.select2.defaults.formatResult( result, container, query, escapeMarkup );
+                /**
+                 * Checks if it's the Select2 v4 or v3 which is used.
+                 *
+                 * https://stackoverflow.com/questions/26950588/select2-ajax-define-formatresult-formatselection-and-initselection-roles-and-b#answer-37890878
+                 * https://select2.org/configuration/options-api
+                 */
+                if ( acf.select2.version == 4 ) {
+                    select2_args.templateResult = function( state ) {
+                        // run default templateResult
+                        var text = $.fn.select2.defaults.defaults.templateResult( state );
 
-                    return bea_elem( result.id, text );
-                };
-                select2_args.formatSelection = function( object, $div ) {
-                    return bea_elem( object.id, object.text );
-                };
+                        return bea_elem( state.id, text );
+                    };
+                    select2_args.templateSelection = function( state ) {
+                        return bea_elem( state.id, state.text );
+                    };
+                // v3
+                } else {
+                    select2_args.formatResult = function( result, container, query, escapeMarkup ) {
+                        // run default formatResult
+                        var text = $.fn.select2.defaults.formatResult( result, container, query, escapeMarkup );
+
+                        return bea_elem( result.id, text );
+                    };
+                    select2_args.formatSelection = function( object, $div ) {
+                        return bea_elem( object.id, object.text );
+                    };
+                }
             }
 
             return select2_args;
