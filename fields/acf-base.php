@@ -185,13 +185,12 @@ class acf_field_svg_icon extends acf_field {
 			return array();
 		}
 
-		$svgs = array();
+		$svg = array();
 		foreach ( $attachments->posts as $attachment ) {
-			$svgs[] = get_attached_file( $attachment->ID );
-			var_dump( get_post_mime_type( $attachment->ID ) );
+			$svg[] = get_attached_file( $attachment->ID );
 		}
 
-		return $svgs;
+		return $svg;
 	}
 
 	/**
