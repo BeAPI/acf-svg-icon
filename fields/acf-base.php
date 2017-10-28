@@ -20,6 +20,9 @@ class acf_field_svg_icon extends acf_field {
 
 		// do not delete!
 		parent::__construct();
+
+		// Hooks !
+		$this->add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
 	}
 
 	/**
@@ -70,7 +73,7 @@ class acf_field_svg_icon extends acf_field {
 	/**
 	 * Get the SVG filepath from theme.
 	 *
-	 * @return mixed|void
+	 * @return array
 	 * @author Nicolas JUEN
 	 */
 	private function get_svg_files_path() {
@@ -184,11 +187,8 @@ class acf_field_svg_icon extends acf_field {
 
 		$svgs = array();
 		foreach ( $attachments->posts as $attachment ) {
-		    $file = get_attached_file( $attachment->ID );
-		    if ( ! self::check_file_content( $file ) ) {
-                continue;
-            }
-			$svgs[] = $file;
+			$svgs[] = get_attached_file( $attachment->ID );
+			var_dump( get_post_mime_type( $attachment->ID ) );
 		}
 
 		return $svgs;
@@ -242,7 +242,17 @@ class acf_field_svg_icon extends acf_field {
 			if ( ! is_file( $file ) ) {
 				continue;
 			}
+			ob_start();
 			include_once( $file );
+			$svg = ob_get_clean();
+
+			if ( true === strpos( $svg, 'style="' ) ) {
+				$svg = str_replace( 'style="', 'style="display:none; ', $svg );
+			} else {
+				$svg = str_replace( '<svg ', '<svg style="display:none;" ', $svg );
+			}
+
+			echo $svg;
 		}
 	}
 
@@ -275,24 +285,20 @@ class acf_field_svg_icon extends acf_field {
 	}
 
 	/**
-     * Test file content, don't load image svg file
-     *
-	 * @param $file
+     * Flush cache on new SVG added to medias
      *
      * @since 2.0.0
+     *
+	 * @param $post_ID
 	 *
 	 * @return bool
 	 */
-	public static function check_file_content( $file ) {
-	    $contents = file_get_contents( $file );
-	    if ( empty( $contents ) ) {
-	        return false;
+	public function save_post_attachment( $post_ID ) {
+		$mime_type = get_post_mime_type( $post_ID );
+        if ( 'image/svg+xml' != $mime_type ) {
+            return false;
         }
 
-		if ( false !== strpos( $contents, '<?xml' ) || false !== strpos( $contents, '<!--?xml' ) ) {
-			return false;
-		}
-
-		return true;
+        wp_cache_flush();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Advanced Custom Fields: SVG Icon
- Version: 1.2.1
+ Version: 2.0.0
  Plugin URI: http://www.beapi.fr
  Description: Add an ACF SVG icon selector.
  Author: BE API Technical team
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-define( 'ACF_SVG_ICON_VER', '1.2.1' );
+define( 'ACF_SVG_ICON_VER', '2.0.0' );
 define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
 
