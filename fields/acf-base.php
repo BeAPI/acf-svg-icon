@@ -106,7 +106,7 @@
 
 		// If not extract them from the CSS file.
 		$contents = file_get_contents( $file_path );
-		preg_match_all( '#id="(\S+)"#', $contents, $svg );
+		preg_match_all( '#id="(\S+)"#', strip_tags($contents, '<symbol><g>'), $svg );
 		array_shift( $svg );
 
 		foreach ( $svg[0] as $id ) {
