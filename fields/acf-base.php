@@ -73,6 +73,18 @@
 	private function get_svg_file_path() {
 		return apply_filters( 'acf_svg_icon_filepath', false );
 	}
+	
+	/**
+	 * Get the allowed tags to parse icon's ids
+	 * Passed directly to strip_tags
+	 * @link http://php.net/manual/en/function.strip-tags.php
+	 *
+	 * @return string
+	 * @author david-treblig
+	 */
+	private function get_allowed_svg_tags() {
+		return apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
+	}
 
 
 	/**
@@ -106,7 +118,8 @@
 
 		// If not extract them from the CSS file.
 		$contents = file_get_contents( $file_path );
-		preg_match_all( '#id="(\S+)"#', strip_tags($contents, '<symbol><g>'), $svg );
+		$tags = $this->get_allowed_svg_tags();
+		preg_match_all( '#id="(\S+)"#', strip_tags($contents, $tags), $svg );
 		array_shift( $svg );
 
 		foreach ( $svg[0] as $id ) {
