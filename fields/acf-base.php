@@ -1,6 +1,4 @@
-<?php
-
-class acf_field_svg_icon extends acf_field {
+<?php class acf_field_svg_icon extends acf_field {
 
 	/**
 	 * Defaults for the svg.
@@ -8,6 +6,8 @@ class acf_field_svg_icon extends acf_field {
 	 * @var array
 	 */
 	public $defaults = array();
+
+	public $cache_key = 'acf_svg_icon_files';
 
 	function __construct() {
 		// vars
@@ -22,7 +22,7 @@ class acf_field_svg_icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		$this->add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
 	}
 
 	/**
@@ -38,11 +38,7 @@ class acf_field_svg_icon extends acf_field {
 	function render_field( $field ) {
 		// create Field HTML
 		?>
-        <input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-               value="<?php echo esc_attr( $field['value'] ); ?>"
-               name="<?php echo esc_attr( $field['name'] ); ?>"
-               data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>"
-               data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
+		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>" value="<?php echo esc_attr( $field['value'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>" data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>" />
 		<?php
 	}
 
@@ -77,7 +73,14 @@ class acf_field_svg_icon extends acf_field {
 	 * @author Nicolas JUEN
 	 */
 	private function get_svg_files_path() {
-		return apply_filters( 'acf_svg_icon_filepath', array() );
+		$custom_svg_path_icons = apply_filters( 'acf_svg_icon_filepath', array() );
+
+		return array_map( function ( $val ) {
+			return [
+				'file' => $val,
+				'type' => 'custom',
+			];
+		}, $custom_svg_path_icons );
 	}
 
 	/**
@@ -88,10 +91,8 @@ class acf_field_svg_icon extends acf_field {
 	 * @return array
 	 */
 	public function get_all_svg_files() {
-
 		// First try to load files from the cache.
-		$cache_key = 'acf_svg_icon_files';
-		$files     = wp_cache_get( $cache_key );
+		$files = wp_cache_get( $this->cache_key );
 		if ( ! empty( $files ) ) {
 			return $files;
 		}
@@ -113,7 +114,7 @@ class acf_field_svg_icon extends acf_field {
 		$files = array_merge( $media_svg_files, $custom_svg_files );
 
 		// Cache 24 hours.
-		wp_cache_set( $cache_key, $files, '', HOUR_IN_SECONDS * 24 );
+		wp_cache_set( $this->cache_key, $files, '', HOUR_IN_SECONDS * 24 );
 
 		return $files;
 	}
@@ -126,30 +127,38 @@ class acf_field_svg_icon extends acf_field {
 	 * @return array|bool
 	 */
 	public function parse_svg() {
-
 		$files = $this->get_all_svg_files();
 		if ( empty( $files ) ) {
 			return false;
 		}
 
 		$out = array();
-
 		foreach ( $files as $file ) {
-			if ( ! is_file( $file ) ) {
+			if ( ! is_file( $file['file'] ) ) {
 				continue;
 			}
 
-			// If not extract them from the CSS file.
-			$contents = file_get_contents( $file );
-			preg_match_all( '#id="(\S+)"#', $contents, $svg );
-			array_shift( $svg );
-
-			foreach ( $svg[0] as $id ) {
-				$out[] = array(
-					'id'       => $id,
-					'text'     => self::get_nice_display_text( $id ),
+			if ( 'media' === $file['type'] ) {
+				$pathinfo = pathinfo( $file['file'] );
+				$out[]    = array(
+					'id'       => $file['id'],
+					'text'     => self::get_nice_display_text( $pathinfo['filename'], false ),
+					'url'      => $file['file_url'],
 					'disabled' => false,
 				);
+			} else {
+				// If not extract them from the CSS file.
+				$contents = file_get_contents( $file['file'] );
+				preg_match_all( '/id="(\S+)"/m', $contents, $svg );
+
+				foreach ( $svg[1] as $id ) {
+					$id    = sanitize_title( $id );
+					$out[] = array(
+						'id'       => $id,
+						'text'     => self::get_nice_display_text( $id ),
+						'disabled' => false,
+					);
+				}
 			}
 		}
 
@@ -187,7 +196,12 @@ class acf_field_svg_icon extends acf_field {
 
 		$svg = array();
 		foreach ( $attachments->posts as $attachment ) {
-			$svg[] = get_attached_file( $attachment->ID );
+			$svg[] = [
+				'type'     => 'media',
+				'id'       => $attachment->ID,
+				'file'     => get_attached_file( $attachment->ID ),
+				'file_url' => wp_get_attachment_url( $attachment->ID ),
+			];
 		}
 
 		return $svg;
@@ -202,7 +216,7 @@ class acf_field_svg_icon extends acf_field {
 	 *
 	 * @return string
 	 */
-	public static function get_nice_display_text( $id ) {
+	public static function get_nice_display_text( $id, $delete_suffixe = true ) {
 		// Split up the string based on the '-' carac
 		$ex = explode( '-', $id );
 		if ( empty( $ex ) ) {
@@ -210,7 +224,9 @@ class acf_field_svg_icon extends acf_field {
 		}
 
 		// Delete the first value, as it has no real value for the icon name.
-		unset( $ex[0] );
+		if ( $delete_suffixe ) {
+			unset( $ex[0] );
+		}
 
 		// Remix values into one with spaces
 		$text = implode( ' ', $ex );
@@ -237,12 +253,13 @@ class acf_field_svg_icon extends acf_field {
 		if ( empty( $files ) ) {
 			return;
 		}
+
 		foreach ( $files as $file ) {
-			if ( ! is_file( $file ) ) {
+			if ( ! is_file( $file['file'] ) ) {
 				continue;
 			}
 			ob_start();
-			include_once( $file );
+			include_once( $file['file'] );
 			$svg = ob_get_clean();
 
 			if ( true === strpos( $svg, 'style="' ) ) {
@@ -284,20 +301,29 @@ class acf_field_svg_icon extends acf_field {
 	}
 
 	/**
-     * Flush cache on new SVG added to medias
-     *
-     * @since 2.0.0
-     *
+	 * Flush cache on new SVG added to medias
+	 *
+	 * @since 2.0.0
+	 *
 	 * @param $post_ID
 	 *
 	 * @return bool
 	 */
 	public function save_post_attachment( $post_ID ) {
 		$mime_type = get_post_mime_type( $post_ID );
-        if ( 'image/svg+xml' != $mime_type ) {
-            return false;
-        }
+		if ( 'image/svg+xml' != $mime_type ) {
+			return false;
+		}
 
-        wp_cache_flush();
-    }
+		wp_cache_delete( $this->cache_key );
+	}
+
+	function format_value( $value, $post_id, $field ) {
+		if ( ! is_int( $value ) ) {
+			return $value;
+		}
+
+		$file = get_attached_file( $value );
+		echo ob_start( $file );
+	}
 }
