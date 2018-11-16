@@ -17,3 +17,8 @@
 .acf_svg__span {
     font-size: 1.2em;
 }
+
+.select2-results svg {
+    width: 40px;
+    height: 40px;
+}
