@@ -13,6 +13,12 @@
 
         input.select2(opts);
 
+        async function fetchSvg(url, id, text) {
+            var req = await fetch(url);
+            var svg = await req.text();
+            $('span[data-id="' + id + '"]').html(svg + text);
+        }
+
         /**
          * Format the content in select 2 for the selected item
          *
@@ -20,8 +26,15 @@
          * @returns {string}
          */
         function bea_svg_format(css) {
-            if (!css.id) { return css.text; }
-            return $('<span class="acf_svg__span"><svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text + '</span>');
+            if (!css.id) {
+                return css.text;
+            }
+            if (css.url) {
+                fetchSvg(css.url, css.id, css.text);
+                return $('<span class="acf_svg__span" data-id="' + css.id + '">' + css.text + '</span>');
+            } else {
+                return $('<span class="acf_svg__span"><svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text + '</span>');
+            }
         };
 
         /**
@@ -31,8 +44,15 @@
          * @returns {string}
          */
         function bea_svg_format_small(css) {
-            if (!css.id) { return css.text; }
-            return $('<span class="acf_svg__span"><svg class="acf_svg__icon small icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text + '</span>');
+            if (!css.id) {
+                return css.text;
+            }
+            if (css.url) {
+                fetchSvg(css.url, css.id, css.text);
+                return $('<span class="acf_svg__span" data-id="' + css.id + '">' + css.text + '</span>');
+            } else {
+                return $('<span class="acf_svg__span"><svg class="acf_svg__icon small icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text + '</span>');
+            }
         };
     }
 

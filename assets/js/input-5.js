@@ -13,6 +13,12 @@
 
         input.select2(opts);
 
+        async function fetchSvg(url, id, text) {
+            var req = await fetch(url);
+            var svg = await req.text();
+            $('span[data-id="' + id + '"]').html(svg + text);
+        }
+
         /**
          * Format the content in select 2 for the selected item
          *
@@ -20,8 +26,16 @@
          * @returns {string}
          */
         function svg_icon_format(css) {
-            return '<svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use> </svg>' + css.text;
-        }
+            if (!css.id) {
+                return css.text;
+            }
+            if (css.url) {
+                fetchSvg(css.url, css.id, css.text);
+                return $('<span class="acf_svg__icon icon" data-id="' + css.id + '">' + css.text + '</span>');
+            } else {
+                return $('<svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text );
+            }
+        };
 
         /**
          * Format the content in select 2 for the dropdown list
@@ -30,9 +44,16 @@
          * @returns {string}
          */
         function svg_icon_format_small(css) {
-            return '<svg class="acf_svg__icon small icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use> </svg>' + css.text;
-        }
-
+            if (!css.id) {
+                return css.text;
+            }
+            if (css.url) {
+                fetchSvg(css.url, css.id, css.text);
+                return $('<span class="acf_svg__icon icon" data-id="' + css.id + '">' + css.text + '</span>');
+            } else {
+                return $('<svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text );
+            }
+        };
     }
 
     /*
