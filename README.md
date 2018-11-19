@@ -1,4 +1,4 @@
-# Advanced Custom Fields: SVG #
+# Advanced Custom Fields: SVG Icon #
 
 This enhance [Advanced Custom Field](https://www.advancedcustomfields.com/pro/) plugin by adding a custom field.
 
@@ -29,7 +29,7 @@ This ACF field type is compatible with:
 ### Using this with your own svg file in your own theme ###
 
 ```php
-add_filter( 'acf_svg_icon_filepath', 'bea_svg_icon_filepath' );
+<?php add_filter( 'acf_svg_icon_filepath', 'bea_svg_icon_filepath' );
 function bea_svg_icon_filepath( $filepath ) {
     if ( is_file( get_stylesheet_directory() . '/assets/icons/icons.svg' ) ) {
         $filepath[] = get_stylesheet_directory() . '/assets/icons/icons.svg';
@@ -39,6 +39,9 @@ function bea_svg_icon_filepath( $filepath ) {
 ```
 
 ## Changelog ##
+
+### 1.2.2 - 19 Nov 2018
+* FEATURE [#9](https://github.com/BeAPI/acf-svg-icon/issues/9) :  upload custom SVGs
 
 ### 1.2.1 - 21 Aug 2017
 * fix notice $acf->version property undefined on ACF versions under 5.6
