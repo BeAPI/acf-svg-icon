@@ -26,7 +26,13 @@ This ACF field type is compatible with:
 
 ## How to ##
 
-### Using this with your own svg file in your own theme ###
+### Upload SVG into library
+
+You can upload media in your library, it must be an <b>SVG</b>, and then it will be displayed into the SVG dropdown.
+
+### In your own theme ###
+
+To load several SVGs from your theme (development), use the following filter to add the main sprite SVG file :
 
 ```php
 <?php add_filter( 'acf_svg_icon_filepath', 'bea_svg_icon_filepath' );
@@ -40,7 +46,8 @@ function bea_svg_icon_filepath( $filepath ) {
 
 ## Changelog ##
 
-### 1.2.2 - 19 Nov 2018
+### 2.0.1 - 19 Nov 2018
+* FEATURE [#8](https://github.com/BeAPI/acf-svg-icon/issues/8) :  improve performances on parsing svg from library
 * FEATURE [#9](https://github.com/BeAPI/acf-svg-icon/issues/9) :  upload custom SVGs
 
 ### 1.2.1 - 21 Aug 2017
