@@ -1,3 +1,4 @@
+.select2-results svg,
 .acf_svg__icon {
     width:40px;
     height:40px;
@@ -5,6 +6,7 @@
     vertical-align: middle;
 }
 
+.select2-selection svg,
 .acf_svg__icon.small {
     width: 25px;
     height: 19px;
@@ -16,9 +18,4 @@
 
 .acf_svg__span {
     font-size: 1.2em;
-}
-
-.select2-results svg {
-    width: 40px;
-    height: 40px;
 }
