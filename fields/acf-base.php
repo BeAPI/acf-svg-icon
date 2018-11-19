@@ -132,6 +132,18 @@
 			return false;
 		}
 
+		/**
+		 * Get the allowed tags to parse icon's ids
+		 *
+		 * @param string $allowed_tags : Passed directly to strip_tags
+		 *
+		 * @author david-treblig
+		 * @since 2.0.1
+		 *
+		 * @return string
+		 */
+		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
+
 		$out = array();
 		foreach ( $files as $file ) {
 			if ( ! is_file( $file['file'] ) ) {
@@ -149,7 +161,7 @@
 			} else {
 				// If not extract them from the CSS file.
 				$contents = file_get_contents( $file['file'] );
-				preg_match_all( '/id="(\S+)"/m', $contents, $svg );
+				preg_match_all( '/id="(\S+)"/m', strip_tags( $contents, $allowed_tags ), $svg );
 
 				foreach ( $svg[1] as $id ) {
 					$id    = sanitize_title( $id );
