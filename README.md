@@ -29,6 +29,7 @@ This ACF field type is compatible with:
 ### Upload SVG into library
 
 You can upload media in your library, it must be an <b>SVG</b>, and then it will be displayed into the SVG dropdown.
+In this case, consider using [Scalable Vector Graphics (svg)](https://fr.wordpress.org/plugins/scalable-vector-graphics-svg) for security.
 
 ### In your own theme ###
 
