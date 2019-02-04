@@ -102,14 +102,14 @@
 		 *
 		 * @since 2.0.0
 		 */
-		$media_svg_files = $this->get_medias_svg();
+		$media_svg_files = (array) $this->get_medias_svg();
 
 		/**
 		 * The path to the svg file.
 		 *
 		 * @since 1.0.0
 		 */
-		$custom_svg_files = $this->get_svg_files_path();
+		$custom_svg_files = (array) $this->get_svg_files_path();
 
 		$files = array_merge( $media_svg_files, $custom_svg_files );
 

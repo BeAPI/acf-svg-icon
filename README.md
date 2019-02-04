@@ -47,6 +47,9 @@ function bea_svg_icon_filepath( $filepath ) {
 
 ## Changelog ##
 
+### 2.0.2 - 04 Feb 2019
+* FIX : Return array in get_all_svg_files function
+
 ### 2.0.1 - 19 Nov 2018
 * FEATURE [#8](https://github.com/BeAPI/acf-svg-icon/issues/8) :  improve performances on parsing svg from library
 * FEATURE [#9](https://github.com/BeAPI/acf-svg-icon/issues/9) :  upload custom SVGs
