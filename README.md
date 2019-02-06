@@ -45,10 +45,20 @@ function bea_svg_icon_filepath( $filepath ) {
 }
 ```
 
+## Contributing ##
+
+If you gonna change some JS or CSS, we use GULP in order to uglify and minify assets. So please do the following for your PR :
+1. install node modules : `npm install`
+2. install gulp dependencies : `npm install gulp`
+3. then minify assets : `gulp dist`
+
 ## Changelog ##
 
+### 2.0.3 - 04 Feb 2019
+* FIX : Mixing custom and media sources
+
 ### 2.0.2 - 04 Feb 2019
-* FIX : Return array in get_all_svg_files function
+* FIX : Return array in get_all_svg_files function (reverted in 2.0.3)
 
 ### 2.0.1 - 19 Nov 2018
 * FEATURE [#8](https://github.com/BeAPI/acf-svg-icon/issues/8) :  improve performances on parsing svg from library
