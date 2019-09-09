@@ -54,6 +54,9 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
+### 2.0.4 - 09 Sep 2019
+* FEATURE : add filter `acf_svg_icon_svg_filter_ids` to filter the icons list
+
 ### 2.0.3 - 04 Feb 2019
 * FIX : Mixing custom and media sources
 
