@@ -174,7 +174,7 @@
 			}
 		}
 
-		return $out;
+		return apply_filters( 'acf_svg_icon_svg_filter_ids', $out );
 	}
 
 	/**
