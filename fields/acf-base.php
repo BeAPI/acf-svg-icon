@@ -1,4 +1,6 @@
-<?php class acf_field_svg_icon extends acf_field {
+<?php
+
+class acf_field_svg_icon extends acf_field {
 
 	/**
 	 * Defaults for the svg.
@@ -9,7 +11,7 @@
 
 	public $cache_key = 'acf_svg_icon_files';
 
-	function __construct() {
+	public function __construct() {
 		// vars
 		$this->name     = 'svg_icon';
 		$this->label    = __( 'SVG Icon selector', 'acf-svg-icon' );
@@ -35,10 +37,12 @@
 	 * @since    3.6
 	 * @date     23/01/13
 	 */
-	function render_field( $field ) {
-		// create Field HTML
+	public function render_field( $field ) {
 		?>
-		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>" value="<?php echo esc_attr( $field['value'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>" data-placeholder="<?php _e( 'Select an icon', 'acf-svg-icon' ); ?>" data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>" />
+		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
+			   value="<?php echo esc_attr( $field['value'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>"
+			   data-placeholder="<?php esc_attr_e( 'Select an icon', 'acf-svg-icon' ); ?>"
+			   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
 		<?php
 	}
 
@@ -49,13 +53,14 @@
 	 *  The value of $field['name'] can be used (like bellow) to save extra data to the $field
 	 *
 	 * @type    action
+	 *
+	 * @param    $field - an array holding all the field's data
+	 *
 	 * @since    3.6
 	 * @date     23/01/13
 	 *
-	 * @param    $field - an array holding all the field's data
 	 */
-	function render_field_settings( $field ) {
-
+	public function render_field_settings( $field ) {
 		// allow clear.
 		acf_render_field_setting( $field, array(
 			'label'        => __( 'Display clear button?', 'acf-svg-icon' ),
@@ -86,13 +91,13 @@
 	/**
 	 * Merge WP Medias SVG and custom SVG files
 	 *
+	 * @return array
 	 * @since 2.0.0
 	 *
-	 * @return array
 	 */
 	public function get_all_svg_files() {
-		// First try to load files from the cache.
-		$files = wp_cache_get( $this->cache_key );
+		// First try to load files list from the cache.
+		$files = get_transient( $this->cache_key );
 		if ( ! empty( $files ) ) {
 			return $files;
 		}
@@ -114,7 +119,7 @@
 		$files = array_merge( $media_svg_files, $custom_svg_files );
 
 		// Cache 24 hours.
-		wp_cache_set( $this->cache_key, $files, '', HOUR_IN_SECONDS * 24 );
+		set_transient( $this->cache_key, $files, HOUR_IN_SECONDS * 24 );
 
 		return $files;
 	}
@@ -122,9 +127,9 @@
 	/**
 	 * Extract icons from svg file.
 	 *
+	 * @return array|bool
 	 * @since 1.0.0
 	 *
-	 * @return array|bool
 	 */
 	public function parse_svg() {
 		$files = $this->get_all_svg_files();
@@ -137,10 +142,10 @@
 		 *
 		 * @param string $allowed_tags : Passed directly to strip_tags
 		 *
-		 * @author david-treblig
+		 * @return string
 		 * @since 2.0.1
 		 *
-		 * @return string
+		 * @author david-treblig
 		 */
 		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
 
@@ -180,9 +185,9 @@
 	/**
 	 * Get WP Medias SVGs
 	 *
+	 * @return array
 	 * @since 2.0.0
 	 *
-	 * @return array
 	 */
 	public function get_medias_svg() {
 		$args = array(
@@ -195,9 +200,10 @@
 		/**
 		 * Filter WP Query get attachments args
 		 *
+		 * @param array $args
+		 *
 		 * @since 2.0.0
 		 *
-		 * @param array $args
 		 */
 		$args = apply_filters( 'acf_svg_icon_wp_medias_svg_args', $args );
 
@@ -223,12 +229,12 @@
 	 * Format the icon id to get his nicename for display purpose
 	 *
 	 * @param $id
-	 *
-	 * @since 1.2.0
+	 * @param bool $delete_suffix
 	 *
 	 * @return string
+	 * @since 1.2.0
 	 */
-	public static function get_nice_display_text( $id, $delete_suffixe = true ) {
+	public static function get_nice_display_text( $id, $delete_suffix = true ) {
 		// Split up the string based on the '-' carac
 		$ex = explode( '-', $id );
 		if ( empty( $ex ) ) {
@@ -236,7 +242,7 @@
 		}
 
 		// Delete the first value, as it has no real value for the icon name.
-		if ( $delete_suffixe ) {
+		if ( $delete_suffix ) {
 			unset( $ex[0] );
 		}
 
@@ -244,7 +250,7 @@
 		$text = implode( ' ', $ex );
 
 		// Add uppercase to the first word
-		return Ucfirst( $text );
+		return ucfirst( $text );
 	}
 
 	/**
@@ -253,13 +259,13 @@
 	 * @since 1.0.0
 	 */
 	public function display_svg() {
-
 		/**
 		 * The svg's files URLs
 		 *
+		 * @param array $font_urls the default svg file url
+		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $font_urls the default svg file url
 		 */
 		$files = $this->get_all_svg_files();
 		if ( empty( $files ) ) {
@@ -270,9 +276,8 @@
 			if ( ! is_file( $file['file'] ) ) {
 				continue;
 			}
-			ob_start();
-			include_once( $file['file'] );
-			$svg = ob_get_clean();
+
+			$svg = file_get_contents( $file['file'] );
 
 			if ( true === strpos( $svg, 'style="' ) ) {
 				$svg = str_replace( 'style="', 'style="display:none; ', $svg );
@@ -289,16 +294,13 @@
 	 *
 	 * @since 1.0.0
 	 */
-	function input_admin_enqueue_scripts() {
-		// The suffix
+	public function input_admin_enqueue_scripts() {
+		// Min version ?
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
 
-		// Localizing the data
 		wp_localize_script( 'acf-input-svg-icon', 'svg_icon_format_data', $this->parse_svg() );
-
 		wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', array( 'select2' ), ACF_SVG_ICON_VER );
 
-		// Enqueuing
 		wp_enqueue_script( 'acf-input-svg-icon' );
 		wp_enqueue_style( 'acf-input-svg-icon' );
 	}
@@ -315,27 +317,36 @@
 	/**
 	 * Flush cache on new SVG added to medias
 	 *
-	 * @since 2.0.0
-	 *
 	 * @param $post_ID
 	 *
-	 * @return bool
+	 * @since 2.0.0
+	 *
 	 */
 	public function save_post_attachment( $post_ID ) {
 		$mime_type = get_post_mime_type( $post_ID );
-		if ( 'image/svg+xml' != $mime_type ) {
-			return false;
+		if ( 'image/svg+xml' !== $mime_type ) {
+			return;
 		}
 
-		wp_cache_delete( $this->cache_key );
+		delete_transient( $this->cache_key );
 	}
 
-	function format_value( $value, $post_id, $field ) {
+	/**
+	 * TODO: Pas compris l'intérêt de ce filtre ici
+	 *
+	 * @param $value
+	 * @param $post_id
+	 * @param $field
+	 *
+	 * @return mixed
+	 */
+	public function format_value( $value, $post_id, $field ) {
 		if ( ! is_int( $value ) ) {
 			return $value;
 		}
 
-		$file = get_attached_file( $value );
-		echo ob_start( $file );
+		//$file = get_attached_file( $value );
+		return $value;
 	}
+
 }
