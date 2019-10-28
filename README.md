@@ -54,8 +54,11 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
-### 2.0.4 - 09 Sep 2019
+### 2.0.4 - 28 Oct 2019
 * FEATURE : add filter `acf_svg_icon_parsed_svg` to filter the icons list
+* FIX : fix PHP fatal error with SVG inclusion
+* FIX : temporary fix an issue with acf_format method
+* IMPROVE : respect WP coding standards
 
 ### 2.0.3 - 04 Feb 2019
 * FIX : Mixing custom and media sources
