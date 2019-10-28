@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Advanced Custom Fields: SVG Icon
- Version: 2.0.3
+ Version: 2.0.4
  Plugin URI: http://www.beapi.fr
  Description: Add an ACF SVG icon selector.
  Author: BE API Technical team
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-define( 'ACF_SVG_ICON_VER', '2.0.3' );
+define( 'ACF_SVG_ICON_VER', '2.0.4' );
 define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -45,8 +45,7 @@ class acf_field_svg_icon_plugin {
 	 *
 	 * @since 1.0.0
 	 */
-	function __construct() {
-
+	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'load_translation' ), 1 );
 
 		// Register ACF fields
@@ -64,15 +63,15 @@ class acf_field_svg_icon_plugin {
 
 	/**
 	 * Register SVG icon field for ACF v5 or v5.6 depending on ACF version.
-	 * @param $major
+	 *
 	 * @since 1.0.0
 	 */
 	public static function register_field_v5() {
-		$version = version_compare( acf_get_setting('version'), '5.6.O', '>=' ) ? 56 : 5;
+		$version = version_compare( acf_get_setting( 'version' ), '5.6.O', '>=' ) ? 56 : 5;
 
 		// Include the corresponding files
-		include_once( sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR ) );
-		include_once( sprintf( '%sfields/acf-%s.php', ACF_SVG_ICON_DIR, $version ) );
+		include_once sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR );
+		include_once sprintf( '%sfields/acf-%s.php', ACF_SVG_ICON_DIR, $version );
 
 		/**
 		 * Instantiate the corresponding class
@@ -92,5 +91,6 @@ class acf_field_svg_icon_plugin {
 function acf_field_svg_icon() {
 	new acf_field_svg_icon_plugin();
 }
+
 add_action( 'plugins_loaded', 'acf_field_svg_icon' );
 
