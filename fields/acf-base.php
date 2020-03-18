@@ -108,6 +108,7 @@ class acf_field_svg_icon extends acf_field {
 		 * @since 2.0.0
 		 */
 		$media_svg_files = $this->get_medias_svg();
+		$media_svg_files = apply_filters( 'acf_svg_icon_wp_media_svgs' , $media_svg_files);
 
 		/**
 		 * The path to the svg file.
