@@ -274,21 +274,19 @@ class acf_field_svg_icon extends acf_field {
 			return;
 		}
 
+		echo '<!-- ACF SVG ICON output dummies start-->';
+		echo '<div style="display: none !important;">';
 		foreach ( $files as $file ) {
 			if ( ! is_file( $file['file'] ) ) {
 				continue;
 			}
-
+			
 			$svg = file_get_contents( $file['file'] );
-
-			if ( true === strpos( $svg, 'style="' ) ) {
-				$svg = str_replace( 'style="', 'style="display:none; ', $svg );
-			} else {
-				$svg = str_replace( '<svg ', '<svg style="display:none;" ', $svg );
-			}
-
+			
 			echo $svg;
 		}
+		echo '</div>';
+		echo '<!-- ACF SVG ICON output dummies end-->';
 	}
 
 	/**
