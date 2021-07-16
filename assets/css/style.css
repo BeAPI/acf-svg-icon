@@ -17,6 +17,9 @@
     margin-top: 3px;
     float: left;
     size: 2px;
+    fill: currentColor;
+    stroke: currentColor;
+    color: black;
 }
 
 .acf_svg__span {
