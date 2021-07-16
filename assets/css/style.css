@@ -4,6 +4,9 @@
     height:40px;
     margin-right: 10px;
     vertical-align: middle;
+    fill: currentColor;
+    stroke: currentColor;
+    color: black;
 }
 
 .select2-selection svg,
