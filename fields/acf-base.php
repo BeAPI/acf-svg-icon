@@ -108,6 +108,7 @@ class acf_field_svg_icon extends acf_field {
 		 * @since 2.0.0
 		 */
 		$media_svg_files = $this->get_medias_svg();
+		$media_svg_files = apply_filters( 'acf_svg_icon_wp_media_svgs' , $media_svg_files);
 
 		/**
 		 * The path to the svg file.
@@ -298,11 +299,14 @@ class acf_field_svg_icon extends acf_field {
 		// Min version ?
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
 
-		wp_localize_script( 'acf-input-svg-icon', 'svg_icon_format_data', $this->parse_svg() );
-		wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', array( 'select2' ), ACF_SVG_ICON_VER );
-
-		wp_enqueue_script( 'acf-input-svg-icon' );
-		wp_enqueue_style( 'acf-input-svg-icon' );
+		// Only enqueue if we find svgs
+		if($files = $this->parse_svg()) {
+			wp_localize_script( 'acf-input-svg-icon', 'svg_icon_format_data', $this->parse_svg() );
+			wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', array( 'select2' ), ACF_SVG_ICON_VER );
+			
+			wp_enqueue_script( 'acf-input-svg-icon' );
+			wp_enqueue_style( 'acf-input-svg-icon' );
+		}
 	}
 
 	/**
