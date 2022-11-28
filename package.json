@@ -15,5 +15,8 @@
     "gulp-uglifycss": "^1.0.6",
     "gulp-watch": "^4.3.11",
     "jshint": "^2.9.4"
+  },
+  "volta": {
+    "node": "10.24.1"
   }
 }
