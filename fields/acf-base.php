@@ -170,8 +170,9 @@ class acf_field_svg_icon extends acf_field {
 
 				foreach ( $svg[1] as $id ) {
 					$id    = sanitize_title( $id );
+					$value = 1 < count( $files ) ? basename( $file['file'] ) . '#' . $id : $id;
 					$out[] = array(
-						'id'       => $id,
+						'id'       => $value,
 						'text'     => self::get_nice_display_text( $id ),
 						'disabled' => false,
 					);
