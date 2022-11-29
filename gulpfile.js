@@ -1,19 +1,20 @@
 /*Load all plugin define in package.json*/
 var gulp = require('gulp'),
 	gulpLoadPlugins = require('gulp-load-plugins'),
-	plugins = gulpLoadPlugins();
+	plugins = gulpLoadPlugins(),
+	uglify = require('gulp-uglify-es').default;
 
 /*JS task*/
 gulp.task('dist', function () {
 	gulp.src([ 'assets/js/input-5.js' ])
 		.pipe(plugins.jshint())
-		.pipe(plugins.uglify())
+		.pipe(uglify())
 		.pipe(plugins.concat('input-5.min.js'))
 		.pipe(gulp.dest('assets/js/'));
 
 	gulp.src([ 'assets/js/input-56.js' ])
 		.pipe(plugins.jshint())
-		.pipe(plugins.uglify())
+		.pipe(uglify())
 		.pipe(plugins.concat('input-56.min.js'))
 		.pipe(gulp.dest('assets/js/'));
 

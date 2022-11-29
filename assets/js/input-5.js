@@ -29,11 +29,13 @@
             if (!css.id) {
                 return css.text;
             }
+            var id = css.id;
+
             if (css.url) {
-                fetchSvg(css.url, css.id, css.text);
-                return $('<span class="acf_svg__icon icon" data-id="' + css.id + '">' + css.text + '</span>');
+                fetchSvg(css.url, id, css.text);
+                return $('<span class="acf_svg__span icon" data-id="' + id + '">' + css.text + '</span>');
             } else {
-                return $('<svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text );
+                return $('<svg class="acf_svg__icon icon ' + id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + id.substring(id.indexOf('#') + 1) + '"></use></svg>' + css.text);
             }
         };
 
@@ -47,11 +49,13 @@
             if (!css.id) {
                 return css.text;
             }
+            var id = css.id;
+
             if (css.url) {
-                fetchSvg(css.url, css.id, css.text);
-                return $('<span class="acf_svg__icon icon" data-id="' + css.id + '">' + css.text + '</span>');
+                fetchSvg(css.url, id, css.text);
+                return $('<span class="acf_svg__icon icon" data-id="' + id + '">' + css.text + '</span>');
             } else {
-                return $('<svg class="acf_svg__icon icon ' + css.id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + css.id + '"></use></svg>' + css.text );
+                return $('<svg class="acf_svg__icon icon ' + id + '" aria-hidden="true" role="img"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + id.substring(id.indexOf('#') + 1) + '"></use></svg>' + css.text );
             }
         };
     }

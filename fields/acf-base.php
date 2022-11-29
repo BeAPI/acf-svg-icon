@@ -150,6 +150,15 @@ class acf_field_svg_icon extends acf_field {
 		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
 
 		$out = array();
+
+		// Ignore SVG with type media to check if there are multiple sprite
+		$custom_files = array_filter(
+			$files,
+			function ( $file ) {
+				return 'media' !== $file['type'];
+			}
+		);
+
 		foreach ( $files as $file ) {
 			if ( ! is_file( $file['file'] ) ) {
 				continue;
@@ -169,9 +178,11 @@ class acf_field_svg_icon extends acf_field {
 				preg_match_all( '/id="(\S+)"/m', strip_tags( $contents, $allowed_tags ), $svg );
 
 				foreach ( $svg[1] as $id ) {
-					$id    = sanitize_title( $id );
+					$id = sanitize_title( $id );
+					// If multiple sprites registered, return sprite name and icon name, otherwise return icon name only
+					$value = 1 < count( $custom_files ) ? basename( $file['file'] ) . '#' . $id : $id;
 					$out[] = array(
-						'id'       => $id,
+						'id'       => $value,
 						'text'     => self::get_nice_display_text( $id ),
 						'disabled' => false,
 					);
