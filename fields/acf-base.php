@@ -149,7 +149,14 @@ class acf_field_svg_icon extends acf_field {
 		 */
 		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
 
-		$out = array();
+		$out          = array();
+		$custom_files = array_filter(
+			$files,
+			function ( $file ) {
+				return 'media' !== $file['type'];
+			}
+		);
+
 		foreach ( $files as $file ) {
 			if ( ! is_file( $file['file'] ) ) {
 				continue;
@@ -170,7 +177,7 @@ class acf_field_svg_icon extends acf_field {
 
 				foreach ( $svg[1] as $id ) {
 					$id    = sanitize_title( $id );
-					$value = 1 < count( $files ) ? basename( $file['file'] ) . '#' . $id : $id;
+					$value = 1 < count( $custom_files ) ? basename( $file['file'] ) . '#' . $id : $id;
 					$out[] = array(
 						'id'       => $value,
 						'text'     => self::get_nice_display_text( $id ),
