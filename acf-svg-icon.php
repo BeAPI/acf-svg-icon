@@ -67,19 +67,20 @@ class acf_field_svg_icon_plugin {
 	 * @since 1.0.0
 	 */
 	public static function register_field_v5() {
-		$version = version_compare( acf_get_setting( 'version' ), '5.6.O', '>=' ) ? 56 : 5;
+		if ( version_compare( acf_get_setting( 'version' ), '5.6.O', '>=' ) ) {
+			// Register field for ACF 5.6 or greater
+			include_once sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR );
+			include_once sprintf( '%sfields/acf-56.php', ACF_SVG_ICON_DIR );
 
-		// Include the corresponding files
-		include_once sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR );
-		include_once sprintf( '%sfields/acf-%s.php', ACF_SVG_ICON_DIR, $version );
+			acf_register_field_type( 'acf_field_svg_icon_56' );
+		} else {
+			// Register field for ACF 5
+			include_once sprintf( '%sfields/acf-base.php', ACF_SVG_ICON_DIR );
+			include_once sprintf( '%sfields/acf-5.php', ACF_SVG_ICON_DIR );
 
-		/**
-		 * Instantiate the corresponding class
-		 * @see acf_field_svg_icon_56
-		 * @see acf_field_svg_icon_5
-		 */
-		$klass = sprintf( 'acf_field_svg_icon_%s', $version );
-		new $klass();
+			$klass = 'acf_field_svg_icon_5';
+			new $klass();
+		}
 	}
 }
 
