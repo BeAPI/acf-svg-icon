@@ -54,6 +54,12 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
+### 2.1.2 - 17 Jul 2023
+* FIX : fix PHP fatal error in the REST API for ACF's values from the field
+
+### 2.1.1 - 12 Apr 2023
+* FEATURE : add french translation
+
 ### 2.1.0 - 29 Nov 2021
 * FEATURE : return sprite name if multiple SVG sprites are registered
 * FIX : Replace `gulp-uglify` with `gulp-uglify-es`
