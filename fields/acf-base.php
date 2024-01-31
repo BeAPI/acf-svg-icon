@@ -143,9 +143,9 @@ class acf_field_svg_icon extends acf_field {
 		 * @param string $allowed_tags : Passed directly to strip_tags
 		 *
 		 * @return string
+		 * @author david-treblig
 		 * @since 2.0.1
 		 *
-		 * @author david-treblig
 		 */
 		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
 
@@ -284,7 +284,8 @@ class acf_field_svg_icon extends acf_field {
 		}
 
 		foreach ( $files as $file ) {
-			if ( ! is_file( $file['file'] ) ) {
+			// Ignore file type "media" because we use the URL and not the svg embeded.
+			if ( 'media' === $file['type'] || ! is_file( $file['file'] ) ) {
 				continue;
 			}
 
