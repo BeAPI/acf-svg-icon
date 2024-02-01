@@ -54,6 +54,9 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
+### 2.1.3 - 17 Jul 2023
+* FEATURE : Skip media type for displaying svgs as we use the URL
+
 ### 2.1.2 - 17 Jul 2023
 * FIX : fix PHP fatal error in the REST API for ACF's values from the field
 
