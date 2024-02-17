@@ -24,7 +24,9 @@ class acf_field_svg_icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'add_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'edit_attachment', array( $this, 'save_post_attachment' ) );
+
 	}
 
 	/**
@@ -283,22 +285,20 @@ class acf_field_svg_icon extends acf_field {
 			return;
 		}
 
+		echo '<!-- ACF SVG ICON output dummies start-->';
+		echo '<div style="display: none !important;">';
 		foreach ( $files as $file ) {
 			// Ignore file type "media" because we use the URL and not the svg embeded.
 			if ( 'media' === $file['type'] || ! is_file( $file['file'] ) ) {
 				continue;
 			}
-
+			
 			$svg = file_get_contents( $file['file'] );
-
-			if ( true === strpos( $svg, 'style="' ) ) {
-				$svg = str_replace( 'style="', 'style="display:none; ', $svg );
-			} else {
-				$svg = str_replace( '<svg ', '<svg style="display:none;" ', $svg );
-			}
-
+			
 			echo $svg;
 		}
+		echo '</div>';
+		echo '<!-- ACF SVG ICON output dummies end-->';
 	}
 
 	/**
