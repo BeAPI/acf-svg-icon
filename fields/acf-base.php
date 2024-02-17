@@ -24,7 +24,9 @@ class acf_field_svg_icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'add_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'edit_attachment', array( $this, 'save_post_attachment' ) );
+
 	}
 
 	/**
