@@ -1,31 +1,31 @@
 <?php
 /*
- Plugin Name: Advanced Custom Fields: SVG Icon
- Version: 2.1.3
- Plugin URI: http://www.beapi.fr
- Description: Add an ACF SVG icon selector.
- Author: BE API Technical team
- Author URI: https://www.beapi.fr
- Domain Path: languages
- Text Domain: acf-svg-icon
+Plugin Name: Advanced Custom Fields: SVG Icon
+Version: 2.1.3
+Plugin URI: http://www.beapi.fr
+Description: Add an ACF SVG icon selector.
+Author: BE API Technical team
+Author URI: https://www.beapi.fr
+Domain Path: languages
+Text Domain: acf-svg-icon
 
- ----
+----
 
- Copyright 2017 BE API Technical team (human@beapi.fr)
+Copyright 2017 BE API Technical team (human@beapi.fr)
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +36,7 @@ define( 'ACF_SVG_ICON_VER', '2.1.3' );
 define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
 
-class acf_field_svg_icon_plugin {
+class Acf_Field_Svg_Icon_Plugin {
 
 	/**
 	 * Constructor.
@@ -46,10 +46,10 @@ class acf_field_svg_icon_plugin {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'init', array( __CLASS__, 'load_translation' ), 1 );
+		add_action( 'init', [ __CLASS__, 'load_translation' ], 1 );
 
 		// Register ACF fields
-		add_action( 'acf/include_field_types', array( __CLASS__, 'register_field_v5' ) );
+		add_action( 'acf/include_field_types', [ __CLASS__, 'register_field_v5' ] );
 	}
 
 	/**
@@ -90,8 +90,7 @@ class acf_field_svg_icon_plugin {
  * @since 1.0.0
  */
 function acf_field_svg_icon() {
-	new acf_field_svg_icon_plugin();
+	new Acf_Field_Svg_Icon_Plugin();
 }
 
 add_action( 'plugins_loaded', 'acf_field_svg_icon' );
-
