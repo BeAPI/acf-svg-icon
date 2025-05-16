@@ -35,6 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'ACF_SVG_ICON_VER', '2.1.3' );
 define( 'ACF_SVG_ICON_URL', plugin_dir_url( __FILE__ ) );
 define( 'ACF_SVG_ICON_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ACF_SVG_ICON_CACHE_KEY', 'acf_svg_icon_files' );
 
 class Acf_Field_Svg_Icon_Plugin {
 
@@ -50,6 +51,10 @@ class Acf_Field_Svg_Icon_Plugin {
 
 		// Register ACF fields
 		add_action( 'acf/include_field_types', [ __CLASS__, 'register_field_v5' ] );
+
+		// Allow to flush the SVG cached data.
+		add_action( 'admin_bar_menu', array( __CLASS__, 'add_action_button_in_admin_bar' ), 120 );
+		add_action( 'init', array( __CLASS__, 'handle_flush_action' ) );
 	}
 
 	/**
@@ -81,6 +86,66 @@ class Acf_Field_Svg_Icon_Plugin {
 			$klass = 'acf_field_svg_icon_5';
 			new $klass();
 		}
+	}
+
+	/**
+	 * Add a button in the WordPress admin bar to flush the cache for the SVG.
+	 *
+	 * @param \WP_Admin_Bar $admin_bar
+	 *
+	 * @return void
+	 */
+	public static function add_action_button_in_admin_bar( $admin_bar ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$admin_bar->add_node(
+			array(
+				'id'     => 'acf_svg_icon_flush_cache',
+				'parent' => null,
+				'group'  => null,
+				'title'  => esc_html__( 'Flush ACF SVG Icon cache', 'acf-svg-icon' ),
+				'href'   => add_query_arg(
+					[
+						'action'   => 'acf_svg_icon_flush_cache',
+						'_wpnonce' => wp_create_nonce( 'flush_cache' )
+					]
+				),
+				'meta'   => [
+					'title' => esc_html__( "If some SVG are missing or not up to date this could help resolve the issue.", 'acf-svg-icon' ),
+				]
+			)
+		);
+	}
+
+	/**
+	 * Handle the cache flush action.
+	 *
+	 * @return void
+	 */
+	public static function handle_flush_action() {
+		if ( ! isset( $_GET['action'] ) || 'acf_svg_icon_flush_cache' !== $_GET['action'] ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( __( 'You do not have sufficient permissions to execute this action.', 'acf-svg-icon' ) );
+		}
+
+		$nonce = sanitize_text_field( $_GET['_wpnonce'] );
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'flush_cache' ) ) {
+			wp_die( __( "Security error. Action couldn't be verified.", 'acf-svg-icon' ) );
+		}
+
+		delete_transient( ACF_SVG_ICON_CACHE_KEY );
+
+		$referer = wp_get_referer();
+		if ( ! $referer ) {
+			$referer = home_url( '/' );
+		}
+		wp_safe_redirect( $referer );
+		exit;
 	}
 }
 
