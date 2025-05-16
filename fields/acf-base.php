@@ -24,7 +24,9 @@ class Acf_Field_Svg_Icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'save_post_attachment', [ $this, 'save_post_attachment' ] );
+		add_action( 'add_attachment', array( $this, 'flush_cache_for_attachments' ) );
+		add_action( 'edit_attachment', array( $this, 'flush_cache_for_attachments' ) );
+		add_action( 'delete_attachment', array( $this, 'flush_cache_for_attachments' ) );
 	}
 
 	/**
@@ -331,14 +333,14 @@ class Acf_Field_Svg_Icon extends acf_field {
 	}
 
 	/**
-	 * Flush cache on new SVG added to medias
+	 * Flush cache when an SVG is added, update or removed from the medias
 	 *
 	 * @param $post_ID
 	 *
 	 * @since 2.0.0
 	 *
 	 */
-	public function save_post_attachment( $post_ID ) {
+	public function flush_cache_for_attachments( $post_ID ) {
 		$mime_type = get_post_mime_type( $post_ID );
 		if ( 'image/svg+xml' !== $mime_type ) {
 			return;
