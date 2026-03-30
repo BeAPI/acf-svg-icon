@@ -1,0 +1,38 @@
+name: "Check plugin version and tags"
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  version-check:
+    name: "Check version doesn't not already exists."
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - id: set-vars
+        name: "Set variables from .plugin-data file"
+        run: |
+          # Get all data from .plugin-data file
+          content=`cat ./.plugin-data`
+          # the following lines are only required for multi line json
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          # end of optional handling for multi line json
+          echo "::set-output name=pluginData::$content"
+
+      - id: version-check
+        name: "Check version in .plugin-data is not existing"
+        run: |
+          # Check version from .plugin-data
+          VERSION=${{fromJson(steps.set-vars.outputs.pluginData).version}}
+
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag aleady exists please update the .plugin-data file to good version";
+            exit 1;
+          fi

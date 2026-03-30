@@ -1,13 +1,52 @@
 {
   "name": "bea/acf-svg-icon",
   "description": "Add ACF field for selecting SVG icons.",
-  "minimum-stability": "stable",
-  "license": "GPL-2.0",
+  "type": "wordpress-plugin",
+  "keywords": ["wordpress", "plugin", "gutenberg", "block", "share", "multisite"],
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "BeAPI",
       "email": "technique@beapi.fr"
     }
   ],
-  "type": "wordpress-plugin"
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "composer/installers": true,
+      "phpro/grumphp-shim": true
+    },
+    "platform": {
+      "php": "7.4.99"
+    }
+  },
+  "require": {
+    "php": "^7.4 || ^8",
+    "ext-json": "*",
+    "composer/installers": "^1.0 || ^2.0"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "overtrue/phplint": "^3.4",
+    "php-parallel-lint/php-parallel-lint": "^1.3",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpro/grumphp-shim": "^1.5",
+    "roave/security-advisories": "dev-latest",
+    "wp-coding-standards/wpcs": "^3.0",
+    "wp-phpunit/wp-phpunit": "^6.0",
+    "yoast/phpunit-polyfills": "^1.0"
+  },
+  "scripts": {
+    "cs": "./vendor/bin/phpcs",
+    "cb": "./vendor/bin/phpcbf",
+    "phpunit": "phpunit"
+  },
+  "scripts-descriptions": {
+    "cs": "Run PHP CodeSniffer on codebase using custom ruleset.",
+    "cb": "Run PHP Code Beautifier and Fixer on codebase using custom ruleset.",
+    "phpunit": "Run PHP unit tests."
+  }
 }

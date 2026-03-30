@@ -1,6 +1,6 @@
 <?php
 
-class acf_field_svg_icon_56 extends acf_field_svg_icon {
+class Acf_Field_Svg_Icon_56 extends Acf_Field_Svg_Icon {
 
 	public function __construct() {
 		// do not delete!
@@ -16,7 +16,13 @@ class acf_field_svg_icon_56 extends acf_field_svg_icon {
 		// Min version ?
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
 
-		wp_register_script( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/js/input-56' . $suffix . '.js', array( 'select2' ), ACF_SVG_ICON_VER );
+		wp_register_script(
+			'acf-input-svg-icon',
+			ACF_SVG_ICON_URL . 'assets/js/input-56' . $suffix . '.js',
+			[ 'select2' ],
+			ACF_SVG_ICON_VER,
+			true
+		);
 		wp_enqueue_script( 'acf-input-svg-icon' );
 
 		parent::input_admin_enqueue_scripts();

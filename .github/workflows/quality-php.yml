@@ -1,0 +1,38 @@
+name: PHP Quality Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint PHP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: mbstring, intl
+
+      - name: Validate composer file
+        run: composer validate
+
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Run codesniffer
+        run: composer cs

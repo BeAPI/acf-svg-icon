@@ -1,13 +1,13 @@
 <?php
 
-class acf_field_svg_icon extends acf_field {
+class Acf_Field_Svg_Icon extends acf_field {
 
 	/**
 	 * Defaults for the svg.
 	 *
 	 * @var array
 	 */
-	public $defaults = array();
+	public $defaults = [];
 
 	public $cache_key = 'acf_svg_icon_files';
 
@@ -15,20 +15,19 @@ class acf_field_svg_icon extends acf_field {
 		// vars
 		$this->name     = 'svg_icon';
 		$this->label    = __( 'SVG Icon selector', 'acf-svg-icon' );
-		$this->category = __( 'Basic', 'acf' );
-		$this->defaults = array(
+		$this->category = __( 'Basic', 'acf' ); //phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- default ACF category name
+		$this->defaults = [
 			'allow_clear' => 0,
-		);
+		];
 
 		// do not delete!
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'save_post_attachment', array( $this, 'save_post_attachment' ) );
+		add_action( 'save_post_attachment', [ $this, 'save_post_attachment' ] );
 	}
 
 	/**
-	 *
 	 *  Create the HTML interface for your field
 	 *
 	 * @param    $field - an array holding all the field's data
@@ -40,9 +39,9 @@ class acf_field_svg_icon extends acf_field {
 	public function render_field( $field ) {
 		?>
 		<input class="widefat acf-svg-icon-<?php echo esc_attr( $field['type'] ); ?>"
-			   value="<?php echo esc_attr( $field['value'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>"
-			   data-placeholder="<?php esc_attr_e( 'Select an icon', 'acf-svg-icon' ); ?>"
-			   data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ) ?>"/>
+				value="<?php echo esc_attr( $field['value'] ); ?>" name="<?php echo esc_attr( $field['name'] ); ?>"
+				data-placeholder="<?php esc_attr_e( 'Select an icon', 'acf-svg-icon' ); ?>"
+				data-allow-clear="<?php echo esc_attr( $field['allow_clear'] ); ?>"/>
 		<?php
 	}
 
@@ -62,13 +61,16 @@ class acf_field_svg_icon extends acf_field {
 	 */
 	public function render_field_settings( $field ) {
 		// allow clear.
-		acf_render_field_setting( $field, array(
-			'label'        => __( 'Display clear button?', 'acf-svg-icon' ),
-			'instructions' => __( 'Whether or not a clear button is displayed when the select box has a selection.', 'acf-svg-icon' ),
-			'name'         => 'allow_clear',
-			'type'         => 'true_false',
-			'ui'           => 1,
-		) );
+		acf_render_field_setting(
+			$field,
+			[
+				'label'        => __( 'Display clear button?', 'acf-svg-icon' ),
+				'instructions' => __( 'Whether or not a clear button is displayed when the select box has a selection.', 'acf-svg-icon' ),
+				'name'         => 'allow_clear',
+				'type'         => 'true_false',
+				'ui'           => 1,
+			]
+		);
 	}
 
 	/**
@@ -78,14 +80,17 @@ class acf_field_svg_icon extends acf_field {
 	 * @author Nicolas JUEN
 	 */
 	private function get_svg_files_path() {
-		$custom_svg_path_icons = apply_filters( 'acf_svg_icon_filepath', array() );
+		$custom_svg_path_icons = apply_filters( 'acf_svg_icon_filepath', [] );
 
-		return array_map( function ( $val ) {
-			return [
-				'type' => 'custom',
-				'file' => $val,
-			];
-		}, (array) $custom_svg_path_icons );
+		return array_map(
+			function ( $val ) {
+				return [
+					'type' => 'custom',
+					'file' => $val,
+				];
+			},
+			(array) $custom_svg_path_icons
+		);
 	}
 
 	/**
@@ -149,7 +154,7 @@ class acf_field_svg_icon extends acf_field {
 		 */
 		$allowed_tags = apply_filters( 'acf_svg_icon_svg_parse_tags', '<symbol><g>' );
 
-		$out = array();
+		$out = [];
 
 		// Ignore SVG with type media to check if there are multiple sprite
 		$custom_files = array_filter(
@@ -166,26 +171,26 @@ class acf_field_svg_icon extends acf_field {
 
 			if ( 'media' === $file['type'] ) {
 				$pathinfo = pathinfo( $file['file'] );
-				$out[]    = array(
+				$out[]    = [
 					'id'       => $file['id'],
 					'text'     => self::get_nice_display_text( $pathinfo['filename'], false ),
 					'url'      => $file['file_url'],
 					'disabled' => false,
-				);
+				];
 			} else {
 				// If not extract them from the CSS file.
-				$contents = file_get_contents( $file['file'] );
+				$contents = file_get_contents( $file['file'] ); //phpcs:ignore WordPress.WP.AlternativeFunctions -- use to load local file
 				preg_match_all( '/id="(\S+)"/m', strip_tags( $contents, $allowed_tags ), $svg );
 
 				foreach ( $svg[1] as $id ) {
 					$id = sanitize_title( $id );
 					// If multiple sprites registered, return sprite name and icon name, otherwise return icon name only
 					$value = 1 < count( $custom_files ) ? basename( $file['file'] ) . '#' . $id : $id;
-					$out[] = array(
+					$out[] = [
 						'id'       => $value,
 						'text'     => self::get_nice_display_text( $id ),
 						'disabled' => false,
-					);
+					];
 				}
 			}
 		}
@@ -201,12 +206,12 @@ class acf_field_svg_icon extends acf_field {
 	 *
 	 */
 	public function get_medias_svg() {
-		$args = array(
+		$args = [
 			'post_type'      => 'attachment',
 			'posts_per_page' => '-1',
 			'post_status'    => 'inherit',
 			'post_mime_type' => 'image/svg+xml',
-		);
+		];
 
 		/**
 		 * Filter WP Query get attachments args
@@ -214,16 +219,15 @@ class acf_field_svg_icon extends acf_field {
 		 * @param array $args
 		 *
 		 * @since 2.0.0
-		 *
 		 */
 		$args = apply_filters( 'acf_svg_icon_wp_medias_svg_args', $args );
 
 		$attachments = new WP_Query( $args );
 		if ( empty( $attachments->posts ) ) {
-			return array();
+			return [];
 		}
 
-		$svg = array();
+		$svg = [];
 		foreach ( $attachments->posts as $attachment ) {
 			$svg[] = [
 				'type'     => 'media',
@@ -246,7 +250,7 @@ class acf_field_svg_icon extends acf_field {
 	 * @since 1.2.0
 	 */
 	public static function get_nice_display_text( $id, $delete_suffix = true ) {
-		// Split up the string based on the '-' carac
+		// Split up the string based on the '-' character
 		$ex = explode( '-', $id );
 		if ( empty( $ex ) ) {
 			return $id;
@@ -289,7 +293,7 @@ class acf_field_svg_icon extends acf_field {
 				continue;
 			}
 
-			$svg = file_get_contents( $file['file'] );
+			$svg = file_get_contents( $file['file'] ); //phpcs:ignore WordPress.WP.AlternativeFunctions -- use to load local file
 
 			if ( true === strpos( $svg, 'style="' ) ) {
 				$svg = str_replace( 'style="', 'style="display:none; ', $svg );
@@ -297,7 +301,7 @@ class acf_field_svg_icon extends acf_field {
 				$svg = str_replace( '<svg ', '<svg style="display:none;" ', $svg );
 			}
 
-			echo $svg;
+			echo $svg; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -311,7 +315,7 @@ class acf_field_svg_icon extends acf_field {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true ? '' : '.min';
 
 		wp_localize_script( 'acf-input-svg-icon', 'svg_icon_format_data', $this->parse_svg() );
-		wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', array( 'select2' ), ACF_SVG_ICON_VER );
+		wp_register_style( 'acf-input-svg-icon', ACF_SVG_ICON_URL . 'assets/css/style' . $suffix . '.css', [ 'select2' ], ACF_SVG_ICON_VER );
 
 		wp_enqueue_script( 'acf-input-svg-icon' );
 		wp_enqueue_style( 'acf-input-svg-icon' );
@@ -360,5 +364,4 @@ class acf_field_svg_icon extends acf_field {
 		//$file = get_attached_file( $value );
 		return $value;
 	}
-
 }
