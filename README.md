@@ -54,6 +54,10 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
+### 2.2.0 - 19 May 2026
+* FIX : Invalid plugin's SVG cache when a SVG is added or removed from the media library
+* FEATURE : Add admin bar button to flush plugin's SVG cache
+
 ### 2.1.3 - 17 Jul 2023
 * FEATURE : Skip media type for displaying svgs as we use the URL
 
