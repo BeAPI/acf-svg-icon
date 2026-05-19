@@ -53,8 +53,8 @@ class Acf_Field_Svg_Icon_Plugin {
 		add_action( 'acf/include_field_types', [ __CLASS__, 'register_field_v5' ] );
 
 		// Allow to flush the SVG cached data.
-		add_action( 'admin_bar_menu', array( __CLASS__, 'add_action_button_in_admin_bar' ), 120 );
-		add_action( 'init', array( __CLASS__, 'handle_flush_action' ) );
+		add_action( 'admin_bar_menu', [ __CLASS__, 'add_action_button_in_admin_bar' ], 120 );
+		add_action( 'init', [ __CLASS__, 'handle_flush_action' ] );
 	}
 
 	/**
@@ -109,12 +109,12 @@ class Acf_Field_Svg_Icon_Plugin {
 				'href'   => add_query_arg(
 					[
 						'action'   => 'acf_svg_icon_flush_cache',
-						'_wpnonce' => wp_create_nonce( 'flush_cache' )
+						'_wpnonce' => wp_create_nonce( 'flush_cache' ),
 					]
 				),
 				'meta'   => [
-					'title' => esc_html__( "If some SVG are missing or not up to date this could help resolve the issue.", 'acf-svg-icon' ),
-				]
+					'title' => esc_html__( 'If some SVG are missing or not up to date this could help resolve the issue.', 'acf-svg-icon' ),
+				],
 			)
 		);
 	}
@@ -130,12 +130,12 @@ class Acf_Field_Svg_Icon_Plugin {
 		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to execute this action.', 'acf-svg-icon' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to execute this action.', 'acf-svg-icon' ) );
 		}
 
 		$nonce = sanitize_text_field( $_GET['_wpnonce'] );
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'flush_cache' ) ) {
-			wp_die( __( "Security error. Action couldn't be verified.", 'acf-svg-icon' ) );
+			wp_die( esc_html__( "Security error. Action couldn't be verified.", 'acf-svg-icon' ) );
 		}
 
 		delete_transient( ACF_SVG_ICON_CACHE_KEY );

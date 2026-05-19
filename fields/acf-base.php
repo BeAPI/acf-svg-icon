@@ -32,9 +32,9 @@ class Acf_Field_Svg_Icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'add_attachment', array( $this, 'flush_cache_for_attachments' ) );
-		add_action( 'edit_attachment', array( $this, 'flush_cache_for_attachments' ) );
-		add_action( 'delete_attachment', array( $this, 'flush_cache_for_attachments' ) );
+		add_action( 'add_attachment', [ $this, 'flush_cache_for_attachments' ] );
+		add_action( 'edit_attachment', [ $this, 'flush_cache_for_attachments' ] );
+		add_action( 'delete_attachment', [ $this, 'flush_cache_for_attachments' ] );
 	}
 
 	/**
