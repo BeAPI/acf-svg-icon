@@ -9,6 +9,14 @@ class Acf_Field_Svg_Icon extends acf_field {
 	 */
 	public $defaults = [];
 
+	/**
+	 * Name of the cache key used to store SVG data after processing.
+	 *
+	 * @deprecated This as been replaced by the constant {@see ACF_SVG_ICON_CACHE_KEY} and
+	 *             will be removed in the next version.
+	 *
+	 * @var string
+	 */
 	public $cache_key = 'acf_svg_icon_files';
 
 	public function __construct() {
@@ -24,7 +32,9 @@ class Acf_Field_Svg_Icon extends acf_field {
 		parent::__construct();
 
 		// Hooks !
-		add_action( 'save_post_attachment', [ $this, 'save_post_attachment' ] );
+		add_action( 'add_attachment', [ $this, 'flush_cache_for_attachments' ] );
+		add_action( 'edit_attachment', [ $this, 'flush_cache_for_attachments' ] );
+		add_action( 'delete_attachment', [ $this, 'flush_cache_for_attachments' ] );
 	}
 
 	/**
@@ -102,7 +112,7 @@ class Acf_Field_Svg_Icon extends acf_field {
 	 */
 	public function get_all_svg_files() {
 		// First try to load files list from the cache.
-		$files = get_transient( $this->cache_key );
+		$files = get_transient( ACF_SVG_ICON_CACHE_KEY );
 		if ( ! empty( $files ) ) {
 			return $files;
 		}
@@ -124,7 +134,7 @@ class Acf_Field_Svg_Icon extends acf_field {
 		$files = array_merge( $media_svg_files, $custom_svg_files );
 
 		// Cache 24 hours.
-		set_transient( $this->cache_key, $files, HOUR_IN_SECONDS * 24 );
+		set_transient( ACF_SVG_ICON_CACHE_KEY, $files, HOUR_IN_SECONDS * 24 );
 
 		return $files;
 	}
@@ -331,20 +341,20 @@ class Acf_Field_Svg_Icon extends acf_field {
 	}
 
 	/**
-	 * Flush cache on new SVG added to medias
+	 * Flush cache when an SVG is added, update or removed from the medias
 	 *
 	 * @param $post_ID
 	 *
 	 * @since 2.0.0
 	 *
 	 */
-	public function save_post_attachment( $post_ID ) {
+	public function flush_cache_for_attachments( $post_ID ) {
 		$mime_type = get_post_mime_type( $post_ID );
 		if ( 'image/svg+xml' !== $mime_type ) {
 			return;
 		}
 
-		delete_transient( $this->cache_key );
+		delete_transient( ACF_SVG_ICON_CACHE_KEY );
 	}
 
 	/**
