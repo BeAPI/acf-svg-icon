@@ -19,6 +19,13 @@ class Acf_Field_Svg_Icon extends acf_field {
 	 */
 	public $cache_key = 'acf_svg_icon_files';
 
+	/**
+	 * Symbol id => option id, built on demand by get_icon_options_by_symbol().
+	 *
+	 * @var array|null
+	 */
+	private $icon_options_by_symbol = null;
+
 	public function __construct() {
 		// vars
 		$this->name     = 'svg_icon';
@@ -81,6 +88,98 @@ class Acf_Field_Svg_Icon extends acf_field {
 				'ui'           => 1,
 			]
 		);
+	}
+
+	/**
+	 * Icon ids are always stored as `sprite.svg#icon-id` since 2.2.0.
+	 *
+	 * Values saved by earlier versions in single sprite mode are bare ids
+	 * (`icon-alert`) and no longer match any option built by parse_svg(), which
+	 * leaves the Select2 field empty. Rewrite them on the fly so the admin can
+	 * match the option again. Media library values stay numeric.
+	 *
+	 * @param mixed $value   Raw field value from the database.
+	 * @param mixed $post_id Post ID (unused, required by ACF signature).
+	 * @param array $field   Field settings (unused, required by ACF signature).
+	 *
+	 * @return mixed
+	 */
+	public function load_value( $value, $post_id, $field ) {
+		return $this->normalize_icon_value( $value );
+	}
+
+	/**
+	 * Persist the canonical `sprite.svg#icon-id` format when the field is saved.
+	 *
+	 * @param mixed $value   Submitted field value.
+	 * @param mixed $post_id Post ID (unused, required by ACF signature).
+	 * @param array $field   Field settings (unused, required by ACF signature).
+	 *
+	 * @return mixed
+	 */
+	public function update_value( $value, $post_id, $field ) {
+		return $this->normalize_icon_value( $value );
+	}
+
+	/**
+	 * Resolve a legacy bare icon id to the sprite that actually contains it.
+	 *
+	 * @param mixed $value Raw or submitted field value.
+	 *
+	 * @return mixed Unchanged when the id belongs to no registered sprite.
+	 */
+	private function normalize_icon_value( $value ) {
+		// Media library SVG: the option id is the attachment ID.
+		if ( ! is_string( $value ) || '' === $value || is_numeric( $value ) ) {
+			return $value;
+		}
+
+		// Already stored in the canonical format.
+		if ( false !== strpos( $value, '#' ) ) {
+			return $value;
+		}
+
+		$options = $this->get_icon_options_by_symbol();
+
+		return isset( $options[ $value ] ) ? $options[ $value ] : $value;
+	}
+
+	/**
+	 * Map each symbol id to the option id exposed to Select2.
+	 *
+	 * Example: `icon-alert` => `sprite.svg#icon-alert`. When the same symbol
+	 * exists in several sprites, the first registered sprite wins.
+	 *
+	 * Memoized because parse_svg() reads every sprite from disk, while this map
+	 * is only needed for values still using the legacy format.
+	 *
+	 * @return array
+	 */
+	private function get_icon_options_by_symbol() {
+		if ( null !== $this->icon_options_by_symbol ) {
+			return $this->icon_options_by_symbol;
+		}
+
+		$options = [];
+		foreach ( (array) $this->parse_svg() as $option ) {
+			if ( ! isset( $option['id'] ) || ! is_string( $option['id'] ) ) {
+				continue;
+			}
+
+			$separator = strpos( $option['id'], '#' );
+			if ( false === $separator ) {
+				continue;
+			}
+
+			$symbol = substr( $option['id'], $separator + 1 );
+			if ( ! isset( $options[ $symbol ] ) ) {
+				$options[ $symbol ] = $option['id'];
+			}
+		}
+
+		$this->icon_options_by_symbol = $options;
+
+		return $this->icon_options_by_symbol;
 	}
 
 	/**
@@ -166,14 +265,6 @@ class Acf_Field_Svg_Icon extends acf_field {
 
 		$out = [];
 
-		// Ignore SVG with type media to check if there are multiple sprite
-		$custom_files = array_filter(
-			$files,
-			function ( $file ) {
-				return 'media' !== $file['type'];
-			}
-		);
-
 		foreach ( $files as $file ) {
 			if ( ! is_file( $file['file'] ) ) {
 				continue;
@@ -194,8 +285,8 @@ class Acf_Field_Svg_Icon extends acf_field {
 
 				foreach ( $svg[1] as $id ) {
 					$id = sanitize_title( $id );
-					// If multiple sprites registered, return sprite name and icon name, otherwise return icon name only
-					$value = 1 < count( $custom_files ) ? basename( $file['file'] ) . '#' . $id : $id;
+					// Return sprite name and icon name
+					$value = basename( $file['file'] ) . '#' . $id;
 					$out[] = [
 						'id'       => $value,
 						'text'     => self::get_nice_display_text( $id ),
