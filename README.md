@@ -54,6 +54,9 @@ If you gonna change some JS or CSS, we use GULP in order to uglify and minify as
 
 ## Changelog ##
 
+### 2.3.0 - 07 Sep 2026
+* FIX : restore Select2 selection for icons saved as a bare id (`icon-alert`) by resolving them to `sprite.svg#icon-id` (rewritten on the next save)
+
 ### 2.2.0 - 19 May 2026
 * FIX : Invalid plugin's SVG cache when a SVG is added or removed from the media library
 * FEATURE : Add admin bar button to flush plugin's SVG cache

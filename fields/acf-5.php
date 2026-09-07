@@ -2,7 +2,7 @@
 
 class Acf_Field_Svg_Icon_5 extends Acf_Field_Svg_Icon {
 
-	public function __construct() {
+	public function __construct() { //phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 		// do not delete!
 		parent::__construct();
 	}
