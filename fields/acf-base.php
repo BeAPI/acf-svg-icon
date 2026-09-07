@@ -91,7 +91,7 @@ class Acf_Field_Svg_Icon extends acf_field {
 	}
 
 	/**
-	 * Icon ids are always stored as `sprite.svg#icon-id` since 2.2.0.
+	 * Icon ids are always stored as `sprite.svg#icon-id` since 2.3.0.
 	 *
 	 * Values saved by earlier versions in single sprite mode are bare ids
 	 * (`icon-alert`) and no longer match any option built by parse_svg(), which
